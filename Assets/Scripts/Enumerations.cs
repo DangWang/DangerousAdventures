@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-//This is my change to demonstrate git!
+//This is my change to demonstrate git branches!
 public class Enumerations : MonoBehaviour
 {
     public enum AffectedEntities
