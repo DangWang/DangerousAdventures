@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &490307649604848280
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 490307649604848286}
+  - component: {fileID: 490307649604848281}
+  - component: {fileID: 1563651365652629054}
+  m_Layer: 0
+  m_Name: BoardLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &490307649604848286
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490307649604848280}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &490307649604848281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490307649604848280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 816b5e8c09f645343aaec8f14e54cbe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  filePath: "Test01.damap\x13"
+  free: {fileID: 6698676804340298277, guid: 0df183463f45c8c4f9b25c12961957b1, type: 3}
+  wall: {fileID: 8174497647601764704, guid: 64993d744f9c3fb448e7ab9214cdc95b, type: 3}
+  artifactChest: {fileID: 9114092811447876300, guid: 106fed2e847c50a42b29df1a6f077d4e,
+    type: 3}
+  chest: {fileID: 8573959110630349724, guid: ff5a9b9f036bc8573873da481b0d26b9, type: 3}
+  door: {fileID: 4339331125863150980, guid: 47f7d8646760f332c9d57d66aba99bfb, type: 3}
+  chance: {fileID: 3674186466564954993, guid: 700508971402ed22c8d2acf8451d243d, type: 3}
+  lava: {fileID: 6591737552783563165, guid: af3db709781e6eefa8754717966afd59, type: 3}
+  lockedDoor: {fileID: 7494749821978152034, guid: b19d6397f080a9f858af2f8135b63b63,
+    type: 3}
+  monsterSpawn: {fileID: 8498600876443048601, guid: d7885555306485e1f9cde228ff17b916,
+    type: 3}
+  pillar: {fileID: 8644749316405019050, guid: ccab36edeb5d39ed3ac76f58cafb0265, type: 3}
+  safeSquare: {fileID: 5991152700662214206, guid: 8a8c9fdcb5cb56f288f527e3365d742e,
+    type: 3}
+  shop: {fileID: 5066873979773496708, guid: 849e3b18e9eb0b0fc89d7a6c1019d45d, type: 3}
+  startSquare: {fileID: 2178660685971693549, guid: 82aaf9321e29a236d9f8286b9246bed8,
+    type: 3}
+  trigger: {fileID: 2235279451042065611, guid: 7f58e276f9c4cb6a8b9554448d2d9b50, type: 3}
+--- !u!114 &1563651365652629054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490307649604848280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 1
+  m_AssetId: 

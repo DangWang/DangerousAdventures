@@ -1,0 +1,23 @@
+Name:    Stun
+Description:                        Communist told gay person to leave the state, he said sure just gotta lay in his bed and leave tomorrow, to which the communist replied "Don't you mean our bed?"
+IsAOE: False
+IsActive: 1
+ChargesTurn: 0
+CastRange: 0
+AllowedTargets:    Untagged
+DurationType: 0
+DamageDispellEffect: False
+TransformSquare: 0
+SquareChange: 0
+SquareChangeRange: 0
+NumberOfBuffsDebuffs: 1
+BuffsDebuffs:0:3_3_1_0_3_0_False_0_0_0_0_0_0
+CastTarget: 1
+TilesInAOE: 
+CorpseContinuation: False
+CanBounce: False
+BounceReduction: 0
+BounceNumber: 0
+BounceRange: 0
+Damage: 0
+DamageType: 2

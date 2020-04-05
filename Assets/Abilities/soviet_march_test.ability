@@ -1,0 +1,22 @@
+Name:                     SovietMarch
+Description:                     Communist told gay person to leave the state, he said sure just gotta lay in his bed and leave tomorrow, to which the communist replied "Don't you mean our bed?"
+IsAOE: False
+IsActive: 1
+ChargesTurn: 0
+CastRange: 0
+AllowedTargets:           Player
+DurationType: 0
+DamageDispellEffect: False
+TransformSquare: 0
+SquareChange: 0
+SquareChangeRange: 0
+NumberOfBuffsDebuffs: 0
+CastTarget: 1
+TilesInAOE: 
+CorpseContinuation: False
+CanBounce: False
+BounceReduction: 0
+BounceNumber: 0
+BounceRange: 0
+Damage: 2
+DamageType: 2
