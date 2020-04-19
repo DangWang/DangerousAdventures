@@ -11,5 +11,10 @@
 !*.prefab
 !*.unity
 !*.txt
+!*.md
 !*.wav
 !*.mp3
+!*.meta
+!*.asset
+!*.asmdef
+!*.dll
