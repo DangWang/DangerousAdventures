@@ -11,10 +11,10 @@ General:
 5. 		Create a branch for new issue (git branch new-feature)
 6. 		Change to your new branch (git checkout new-feature)
 7. 		Experiment, work and have fun :-)
-8.  	Stage your changes to commit {(git add filepath1 filepath2) to add individual files or (git add .) to stage all changed files}
-9.  	Commit changes (git commit -m 'commit message')
+8.  		Stage your changes to commit {(git add filepath1 filepath2) to add individual files or (git add Assets/*) to stage all changed files in the Assets folder}
+9.  		Commit changes (git commit -m 'commit message')
 10.		Push your branch to GitHub (git push origin new-branch). If that fails, run the command that GitHub proposes to make a new remote branch and push
-11. 	Go to your GitHub fork and press the 'Pull Request' button
+11. 		Go to your GitHub fork and press the 'Pull Request' button
 
 Merge Conflicts:
 
