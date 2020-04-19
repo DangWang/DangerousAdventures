@@ -21,11 +21,11 @@ namespace Ninja.WebSockets.Internal
             Count = count;
         }
 
-        public WebSocketFrame(bool isFinBitSet, WebSocketOpCode webSocketOpCode, int count, WebSocketCloseStatus closeStatus, string closeStatusDescription) : this(isFinBitSet, webSocketOpCode, count)
+        public WebSocketFrame(bool isFinBitSet, WebSocketOpCode webSocketOpCode, int count,
+            WebSocketCloseStatus closeStatus, string closeStatusDescription) : this(isFinBitSet, webSocketOpCode, count)
         {
             CloseStatus = closeStatus;
             CloseStatusDescription = closeStatusDescription;
         }
-
     }
 }

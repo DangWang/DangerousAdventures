@@ -43,7 +43,7 @@ public class script_AbilityCaster : NetworkBehaviour
             {
                 var attackDice = new Enumerations.AttackDie[myAbility.damage];
                 for (var i = 0; i < myAbility.damage; i++)
-                    attackDice[i] = (Enumerations.AttackDie) Utilities.RollDice(1);
+                    attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
                 if (isTrap)
                     castingTarget.GetComponent<scr_CombatController>()
                         .Defend(attackDice, Enumerations.DamageType.Pure, null);
@@ -68,8 +68,8 @@ public class script_AbilityCaster : NetworkBehaviour
             foreach (var coords in myAbility.tilesInAOE)
             {
                 castingTarget = script_BoardController.GetTileByCoords(
-                    (int) castingPoint.transform.position.x + coords[0] - xoff,
-                    (int) castingPoint.transform.position.y + coords[1] - yoff);
+                    (int)castingPoint.transform.position.x + coords[0] - xoff,
+                    (int)castingPoint.transform.position.y + coords[1] - yoff);
                 if (castingTarget.GetComponent<script_Tile>().occupied)
                 {
                     print("Casted on occupied");
@@ -78,7 +78,7 @@ public class script_AbilityCaster : NetworkBehaviour
                     {
                         var attackDice = new Enumerations.AttackDie[myAbility.damage];
                         for (var i = 0; i < myAbility.damage; i++)
-                            attackDice[i] = (Enumerations.AttackDie) Utilities.RollDice(1);
+                            attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
                         if (isTrap)
                             castingTarget.GetComponent<scr_CombatController>()
                                 .Defend(attackDice, Enumerations.DamageType.Pure, null);
@@ -119,7 +119,7 @@ public class script_AbilityCaster : NetworkBehaviour
             {
                 var attackDice = new Enumerations.AttackDie[myAbility.damage];
                 for (var i = 0; i < myAbility.damage; i++)
-                    attackDice[i] = (Enumerations.AttackDie) Utilities.RollDice(1);
+                    attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
                 if (isTrap)
                     castingTarget.GetComponent<scr_CombatController>()
                         .Defend(attackDice, Enumerations.DamageType.Pure, null);
@@ -144,8 +144,8 @@ public class script_AbilityCaster : NetworkBehaviour
             foreach (var coords in myAbility.tilesInAOE)
             {
                 castingTarget = script_BoardController.GetTileByCoords(
-                    (int) castingPoint.transform.position.x + coords[0] - xoff,
-                    (int) castingPoint.transform.position.y + coords[1] - yoff);
+                    (int)castingPoint.transform.position.x + coords[0] - xoff,
+                    (int)castingPoint.transform.position.y + coords[1] - yoff);
                 if (castingTarget.GetComponent<script_Tile>().occupied)
                 {
                     print("Casted on occupied");
@@ -154,7 +154,7 @@ public class script_AbilityCaster : NetworkBehaviour
                     {
                         var attackDice = new Enumerations.AttackDie[myAbility.damage];
                         for (var i = 0; i < myAbility.damage; i++)
-                            attackDice[i] = (Enumerations.AttackDie) Utilities.RollDice(1);
+                            attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
                         if (isTrap)
                             castingTarget.GetComponent<scr_CombatController>()
                                 .Defend(attackDice, Enumerations.DamageType.Pure, null);
@@ -185,11 +185,11 @@ public class script_AbilityCaster : NetworkBehaviour
         Ability.BuffDebuff LoadBuffDebuff(string s)
         {
             var my = new Ability.BuffDebuff();
-            var splitString = s.Split(new[] {"_"}, StringSplitOptions.RemoveEmptyEntries);
+            var splitString = s.Split(new[] { "_" }, StringSplitOptions.RemoveEmptyEntries);
 
-            my.disable = (Enumerations.DisableTypes) int.Parse(splitString[0]);
-            my.purge = (Enumerations.Purge) int.Parse(splitString[1]);
-            my.durationType = (Enumerations.SpellDuration) int.Parse(splitString[2]);
+            my.disable = (Enumerations.DisableTypes)int.Parse(splitString[0]);
+            my.purge = (Enumerations.Purge)int.Parse(splitString[1]);
+            my.durationType = (Enumerations.SpellDuration)int.Parse(splitString[2]);
             my.throwRange = int.Parse(splitString[3]);
             my.duration = int.Parse(splitString[4]);
             my.movementModifier = int.Parse(splitString[5]);
@@ -207,13 +207,13 @@ public class script_AbilityCaster : NetworkBehaviour
         List<int[]> LoadAOETiles(string s)
         {
             var my = new List<int[]>();
-            var splitString = s.Split(new[] {"(", ",", ")", " "}, StringSplitOptions.RemoveEmptyEntries);
+            var splitString = s.Split(new[] { "(", ",", ")", " " }, StringSplitOptions.RemoveEmptyEntries);
 
             for (var i = 0; i < splitString.Length; i += 2)
             {
                 Debug.Log(splitString[i]);
                 Debug.Log(splitString[i + 1]);
-                my.Add(new int[2] {int.Parse(splitString[i]), int.Parse(splitString[i + 1])});
+                my.Add(new int[2] { int.Parse(splitString[i]), int.Parse(splitString[i + 1]) });
             }
 
             return my;
@@ -227,7 +227,7 @@ public class script_AbilityCaster : NetworkBehaviour
         {
             //Read the line and get data
             //Debug.Log(line);
-            var splitString = line.Split(new[] {":"}, StringSplitOptions.RemoveEmptyEntries);
+            var splitString = line.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
             if (splitString[0] == "Name")
             {
                 ability.name = splitString[1];
@@ -258,7 +258,7 @@ public class script_AbilityCaster : NetworkBehaviour
             }
             else if (splitString[0] == "DurationType")
             {
-                ability.durationType = (Enumerations.SpellDuration) int.Parse(splitString[1]);
+                ability.durationType = (Enumerations.SpellDuration)int.Parse(splitString[1]);
             }
             else if (splitString[0] == "DamageDispellEffect")
             {
@@ -287,7 +287,7 @@ public class script_AbilityCaster : NetworkBehaviour
             }
             else if (splitString[0] == "CastTarget")
             {
-                ability.targetPoint = (Enumerations.TargetPoint) int.Parse(splitString[1]);
+                ability.targetPoint = (Enumerations.TargetPoint)int.Parse(splitString[1]);
             }
             else if (splitString[0] == "TilesInAOE")
             {
@@ -403,7 +403,7 @@ public class script_AbilityCaster : NetworkBehaviour
             }
             else if (splitString[0] == "DamageType")
             {
-                ability.damageType = (Enumerations.DamageType) int.Parse(splitString[1]);
+                ability.damageType = (Enumerations.DamageType)int.Parse(splitString[1]);
             }
             else if (splitString[0] == "IntervalsPerTurn")
             {

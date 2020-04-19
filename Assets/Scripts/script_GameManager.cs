@@ -9,9 +9,9 @@ public class script_GameManager : NetworkBehaviour
     public static int numberOfPlayers = 2;
     public static scr_Player[] myPlayers = new scr_Player[numberOfPlayers];
     public static bool preparationPhase;
-    private static int currentPlayer = 1;
-    private static Text currentPlayerText;
-    private bool gameInProgress;
+    private static int s_currentPlayer = 1;
+    private static Text s_currentPlayerText;
+    private bool _gameInProgress;
 
     private void Start()
     {
@@ -19,7 +19,7 @@ public class script_GameManager : NetworkBehaviour
         //myPlayers[1] = GameObject.Find("PlayerNew").GetComponent<scr_Player>();
         //currentPlayerText = transform.Find("Canvas/CurrentPlayer/Text").GetComponent<Text>();
         preparationPhase = false;
-        gameInProgress = false;
+        _gameInProgress = false;
         //StartPlayerTurn(ref myPlayers[0]);//start dm turn TODO MAKE THIS SERIOUS
     }
 
@@ -28,10 +28,10 @@ public class script_GameManager : NetworkBehaviour
         if (isServer)
         {
             if (Input.GetKey(KeyCode.F5)) SceneManager.LoadScene(0);
-            if (playersInGame == numberOfPlayers && gameInProgress == false)
+            if (playersInGame == numberOfPlayers && _gameInProgress == false)
             {
                 print("Let the gaaaameeeees begiiin!");
-                gameInProgress = true;
+                _gameInProgress = true;
                 RpcNextTurn(myPlayers[1].name);
             }
         }
@@ -41,12 +41,12 @@ public class script_GameManager : NetworkBehaviour
     public void RpcNextTurn(string current)
     {
         RpcEndPlayerTurn(current);
-        currentPlayer++;
-        if (currentPlayer >= numberOfPlayers) 
-            currentPlayer = 0;
-        print("Next player: " + myPlayers[currentPlayer].name);
-        if(isServer)
-            RpcStartPlayerTurn(myPlayers[currentPlayer].name);
+        s_currentPlayer++;
+        if (s_currentPlayer >= numberOfPlayers)
+            s_currentPlayer = 0;
+        print("Next player: " + myPlayers[s_currentPlayer].name);
+        if (isServer)
+            RpcStartPlayerTurn(myPlayers[s_currentPlayer].name);
     }
 
     [ClientRpc]

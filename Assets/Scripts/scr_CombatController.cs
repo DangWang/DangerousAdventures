@@ -4,34 +4,25 @@ using UnityEngine.UI;
 
 public class scr_CombatController : NetworkBehaviour
 {
-    [SyncVar]
-    public bool attackedThisTurn;
-    [SyncVar]
-    public int attackRange;
-    private Slider healthBar;
-    [SyncVar(hook = "OnChangeHealth")]
-    public int hp;
-    [SyncVar]
-    public int magicalAttack;
-    [SyncVar]
-    public int magicalDefense;
+    [SyncVar] public bool attackedThisTurn;
+    [SyncVar] public int attackRange;
+    private Slider _healthBar;
+    [SyncVar(hook = "OnChangeHealth")] public int hp;
+    [SyncVar] public int magicalAttack;
+    [SyncVar] public int magicalDefense;
     public scr_Player parentScript;
-    [SyncVar]
-    public int physicalAttack;
-    [SyncVar]
-    public int physicalDefense;
-    [SyncVar]
-    public int pureAttack;
-    [SyncVar]
-    public int pureDefense;
+    [SyncVar] public int physicalAttack;
+    [SyncVar] public int physicalDefense;
+    [SyncVar] public int pureAttack;
+    [SyncVar] public int pureDefense;
 
     private void Start()
     {
         //parentScript = GetComponent<scr_Player>();
-        healthBar = transform.Find("Canvas/Healthbar").GetComponent<Slider>();
-        healthBar.value = hp;
-        healthBar.maxValue = hp;
-        healthBar.gameObject.SetActive(false);
+        _healthBar = transform.Find("Canvas/Healthbar").GetComponent<Slider>();
+        _healthBar.value = hp;
+        _healthBar.maxValue = hp;
+        _healthBar.gameObject.SetActive(false);
     }
 
     public void OnStartTurn()
@@ -50,11 +41,11 @@ public class scr_CombatController : NetworkBehaviour
                 CmdAttack(parentScript.altSelected.name);
         }
     }
-    
+
     [Command]
     private void CmdAttack(string targetS)
     {
-        GameObject target = GameObject.Find(targetS);
+        var target = GameObject.Find(targetS);
         Attack(target.gameObject.GetComponent<scr_CombatController>());
     }
 
@@ -62,7 +53,7 @@ public class scr_CombatController : NetworkBehaviour
     public void Attack(scr_CombatController target)
     {
         print(name + "is attacking.");
-        var set = new int[6] {0, 0, 1, 1, 2, 3};
+        var set = new int[6] { 0, 0, 1, 1, 2, 3 };
         Enumerations.AttackDie[] dice;
         //Physical Attack
         if (physicalAttack > 0)
@@ -71,7 +62,7 @@ public class scr_CombatController : NetworkBehaviour
             for (var i = 0; i < physicalAttack; i++)
             {
                 var j = set[Utilities.RollDice(1) - 1];
-                dice[i] = (Enumerations.AttackDie) j;
+                dice[i] = (Enumerations.AttackDie)j;
                 print("Attack die " + i + ":" + dice[i]);
             }
 
@@ -85,7 +76,7 @@ public class scr_CombatController : NetworkBehaviour
             for (var i = 0; i < physicalAttack; i++)
             {
                 var j = set[Utilities.RollDice(1) - 1];
-                dice[i] = (Enumerations.AttackDie) j;
+                dice[i] = (Enumerations.AttackDie)j;
                 print("Attack die " + i + ":" + dice[i]);
             }
 
@@ -99,7 +90,7 @@ public class scr_CombatController : NetworkBehaviour
             for (var i = 0; i < physicalAttack; i++)
             {
                 var j = set[Utilities.RollDice(1) - 1];
-                dice[i] = (Enumerations.AttackDie) j;
+                dice[i] = (Enumerations.AttackDie)j;
                 print("Attack die " + i + ":" + dice[i]);
             }
 
@@ -118,19 +109,19 @@ public class scr_CombatController : NetworkBehaviour
 
         if (damageType == Enumerations.DamageType.Physical)
         {
-            var set = new int[6] {0, 0, 1, 1, 2, 3};
+            var set = new int[6] { 0, 0, 1, 1, 2, 3 };
             defenderDice = new Enumerations.DefenseDie[physicalDefense];
             for (var i = 0; i < physicalDefense; i++)
             {
                 var j = set[Utilities.RollDice(1) - 1];
-                defenderDice[i] = (Enumerations.DefenseDie) j;
+                defenderDice[i] = (Enumerations.DefenseDie)j;
                 print("Defense die " + i + ":" + defenderDice[i]);
             }
         }
         else if (damageType == Enumerations.DamageType.Magical)
         {
             defenderDice = new Enumerations.DefenseDie[magicalDefense];
-            for (var i = 0; i < magicalDefense; i++) defenderDice[i] = (Enumerations.DefenseDie) Utilities.RollDice(1);
+            for (var i = 0; i < magicalDefense; i++) defenderDice[i] = (Enumerations.DefenseDie)Utilities.RollDice(1);
         }
         else
         {
@@ -202,7 +193,7 @@ public class scr_CombatController : NetworkBehaviour
     public void TakeDamage(int damage)
     {
         hp -= damage;
-        healthBar.value = hp;
+        _healthBar.value = hp;
         if (damage == 1)
         {
             //play hit sound
@@ -217,11 +208,11 @@ public class scr_CombatController : NetworkBehaviour
 
     public void ToggleHealthbar()
     {
-        healthBar.gameObject.SetActive(!healthBar.gameObject.activeInHierarchy);
+        _healthBar.gameObject.SetActive(!_healthBar.gameObject.activeInHierarchy);
     }
-    
+
     public void OnChangeHealth(int oldhp, int newhp)
     {
-        healthBar.value = newhp;
+        _healthBar.value = newhp;
     }
 }

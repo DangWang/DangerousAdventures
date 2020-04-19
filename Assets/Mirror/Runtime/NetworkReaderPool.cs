@@ -5,13 +5,13 @@ namespace Mirror
 {
     public static class NetworkReaderPool
     {
-        static readonly Stack<NetworkReader> pool = new Stack<NetworkReader>();
+        private static readonly Stack<NetworkReader> pool = new Stack<NetworkReader>();
 
         public static NetworkReader GetReader(byte[] bytes)
         {
             if (pool.Count != 0)
             {
-                NetworkReader reader = pool.Pop();
+                var reader = pool.Pop();
                 // reset buffer
                 reader.SetBuffer(bytes);
                 return reader;
@@ -24,7 +24,7 @@ namespace Mirror
         {
             if (pool.Count != 0)
             {
-                NetworkReader reader = pool.Pop();
+                var reader = pool.Pop();
                 // reset buffer
                 reader.SetBuffer(segment);
                 return reader;

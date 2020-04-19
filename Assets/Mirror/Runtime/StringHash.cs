@@ -8,8 +8,8 @@ namespace Mirror
         {
             unchecked
             {
-                int hash = 23;
-                foreach (char c in text)
+                var hash = 23;
+                foreach (var c in text)
                     hash = hash * 31 + c;
                 return hash;
             }

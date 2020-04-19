@@ -9,11 +9,11 @@ public class scr_Monster : NetworkBehaviour
     public int abilityCount;
     public List<Ability.AbilityStruct> activeAbilities = new List<Ability.AbilityStruct>();
 
-    private scr_AffectedBy affectedBy;
+    private scr_AffectedBy _affectedBy;
 
     //TODO add list of active abilities over time
     public bool casting;
-    private scr_CombatController combatController;
+    private scr_CombatController _combatController;
     public int goldDropped;
     public int goldRandomOffset;
     public bool hasAbilities;
@@ -21,17 +21,17 @@ public class scr_Monster : NetworkBehaviour
     public int monsterCost;
     public string monsterDescription;
     public int monsterTier;
-    private scr_Movement movementController;
-    private script_BoardController myScript_BoardController;
+    private scr_Movement _movementController;
+    private script_BoardController _myScript_BoardController;
     public scr_Player parentScript;
     public int respawnTimer; //in turns
     public string spawnTag;
 
     private void Start()
     {
-        combatController = GetComponent<scr_CombatController>();
-        movementController = GetComponent<scr_Movement>();
-        affectedBy = GetComponent<scr_AffectedBy>();
+        _combatController = GetComponent<scr_CombatController>();
+        _movementController = GetComponent<scr_Movement>();
+        _affectedBy = GetComponent<scr_AffectedBy>();
         foreach (var ab in abilities) script_AbilityCaster.PrepareAbility(ab.name);
         //parentScript = GetComponent<scr_Player>();
     }
@@ -53,9 +53,8 @@ public class scr_Monster : NetworkBehaviour
 
     public void SelectedUpdate()
     {
-        if(hasAuthority)
-        {
-            if (!affectedBy.isStunned)
+        if (hasAuthority)
+            if (!_affectedBy.isStunned)
             {
                 if (Input.GetKeyUp(KeyCode.C) && !abilityCasted)
                 {
@@ -71,8 +70,8 @@ public class scr_Monster : NetworkBehaviour
 
                 if (!casting)
                 {
-                    movementController.OnSelectedUpdate(); //movement logic
-                    combatController.OnSelectedUpdate(); //combat logic
+                    _movementController.OnSelectedUpdate(); //movement logic
+                    _combatController.OnSelectedUpdate(); //combat logic
 
                     //open door if in range
                     if (Input.GetMouseButtonUp(1))
@@ -89,7 +88,6 @@ public class scr_Monster : NetworkBehaviour
                     }
                 }
             }
-        }
     }
 
     [Command]
@@ -100,7 +98,7 @@ public class scr_Monster : NetworkBehaviour
 
     public void Unselected()
     {
-        movementController.Unselected();
+        _movementController.Unselected();
     }
 
 
@@ -111,10 +109,10 @@ public class scr_Monster : NetworkBehaviour
         //drop gold
         //dead (respawn state)
         print(name + " is dead.");
-        movementController.myTile.GetComponent<script_Tile>().occupied = false;
+        _movementController.myTile.GetComponent<script_Tile>().occupied = false;
         parentScript.AddMonsterPoints(monsterCost, respawnTimer);
         //Destroy(gameObject);
-        if(hasAuthority)
+        if (hasAuthority)
             NetworkServer.Destroy(gameObject);
     }
 }

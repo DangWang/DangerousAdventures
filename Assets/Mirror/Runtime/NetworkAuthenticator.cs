@@ -7,7 +7,10 @@ namespace Mirror
     /// <summary>
     /// Unity Event for the NetworkConnection
     /// </summary>
-    [Serializable] public class UnityEventNetworkConnection : UnityEvent<NetworkConnection> { }
+    [Serializable]
+    public class UnityEventNetworkConnection : UnityEvent<NetworkConnection>
+    {
+    }
 
     /// <summary>
     /// Base class for implementing component-based authentication during the Connect phase
@@ -16,7 +19,6 @@ namespace Mirror
     public abstract class NetworkAuthenticator : MonoBehaviour
     {
         [Header("Event Listeners (optional)")]
-
         /// <summary>
         /// Notify subscribers on the server when a client is authenticated
         /// </summary>
@@ -35,7 +37,9 @@ namespace Mirror
         /// Called on server from StartServer to initialize the Authenticator
         /// <para>Server message handlers should be registered in this method.</para>
         /// </summary>
-        public virtual void OnStartServer() { }
+        public virtual void OnStartServer()
+        {
+        }
 
         // This will get more code in the near future
         internal void OnServerAuthenticateInternal(NetworkConnection conn)
@@ -57,7 +61,9 @@ namespace Mirror
         /// Called on client from StartClient to initialize the Authenticator
         /// <para>Client message handlers should be registered in this method.</para>
         /// </summary>
-        public virtual void OnStartClient() { }
+        public virtual void OnStartClient()
+        {
+        }
 
         // This will get more code in the near future
         internal void OnClientAuthenticateInternal(NetworkConnection conn)
@@ -73,11 +79,11 @@ namespace Mirror
 
         #endregion
 
-        void OnValidate()
+        private void OnValidate()
         {
 #if UNITY_EDITOR
             // automatically assign NetworkManager field if we add this to NetworkManager
-            NetworkManager manager = GetComponent<NetworkManager>();
+            var manager = GetComponent<NetworkManager>();
             if (manager != null && manager.authenticator == null)
             {
                 manager.authenticator = this;

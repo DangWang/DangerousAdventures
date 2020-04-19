@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class scr_Inventory : NetworkBehaviour
 {
-    private scr_CombatController combatController;
+    private scr_CombatController _combatController;
     public List<GameObject> equippedWeapons = new List<GameObject>();
     public List<GameObject> myItems = new List<GameObject>();
 
     private void Start()
     {
-        combatController = GetComponent<scr_CombatController>();
+        _combatController = GetComponent<scr_CombatController>();
     }
 
     //Makes the position of all the items in the inventory the same as the parent gameobject.
@@ -51,12 +51,12 @@ public class scr_Inventory : NetworkBehaviour
         {
             equippedWeapons.Add(item);
             var weaponScript = item.GetComponent<scr_Weapon>();
-            combatController.physicalAttack += weaponScript.physicalAttack;
-            combatController.physicalDefense += weaponScript.physicalDefense;
-            combatController.magicalAttack += weaponScript.magicalAttack;
-            combatController.magicalDefense += weaponScript.magicalDefense;
-            combatController.pureAttack += weaponScript.pureAttack;
-            combatController.pureDefense += weaponScript.pureDefense;
+            _combatController.physicalAttack += weaponScript.physicalAttack;
+            _combatController.physicalDefense += weaponScript.physicalDefense;
+            _combatController.magicalAttack += weaponScript.magicalAttack;
+            _combatController.magicalDefense += weaponScript.magicalDefense;
+            _combatController.pureAttack += weaponScript.pureAttack;
+            _combatController.pureDefense += weaponScript.pureDefense;
         }
         else
         {
@@ -71,12 +71,12 @@ public class scr_Inventory : NetworkBehaviour
         {
             equippedWeapons.Remove(item);
             var weaponScript = item.GetComponent<scr_Weapon>();
-            combatController.physicalAttack -= weaponScript.physicalAttack;
-            combatController.physicalDefense -= weaponScript.physicalDefense;
-            combatController.magicalAttack -= weaponScript.magicalAttack;
-            combatController.magicalDefense -= weaponScript.magicalDefense;
-            combatController.pureAttack -= weaponScript.pureAttack;
-            combatController.pureDefense -= weaponScript.pureDefense;
+            _combatController.physicalAttack -= weaponScript.physicalAttack;
+            _combatController.physicalDefense -= weaponScript.physicalDefense;
+            _combatController.magicalAttack -= weaponScript.magicalAttack;
+            _combatController.magicalDefense -= weaponScript.magicalDefense;
+            _combatController.pureAttack -= weaponScript.pureAttack;
+            _combatController.pureDefense -= weaponScript.pureDefense;
         }
         else
         {

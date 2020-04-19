@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-//This is my change to demonstrate git!
+
+//This is my change to demonstrate git branches!
 public class Enumerations : MonoBehaviour
 {
     public enum AffectedEntities
@@ -115,43 +116,43 @@ public class Enumerations : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Alpha2))
         {
             canvasDirections.SetActive(false);
-            return (Direction) 1;
+            return (Direction)1;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha3))
         {
             canvasDirections.SetActive(false);
-            return (Direction) 2;
+            return (Direction)2;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha4))
         {
             canvasDirections.SetActive(false);
-            return (Direction) 3;
+            return (Direction)3;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha5))
         {
             canvasDirections.SetActive(false);
-            return (Direction) 4;
+            return (Direction)4;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha6))
         {
             canvasDirections.SetActive(false);
-            return (Direction) 5;
+            return (Direction)5;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha7))
         {
             canvasDirections.SetActive(false);
-            return (Direction) 6;
+            return (Direction)6;
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha8))
         {
             canvasDirections.SetActive(false);
-            return (Direction) 7;
+            return (Direction)7;
         }
 
         return Direction.Choose;

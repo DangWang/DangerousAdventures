@@ -11,10 +11,10 @@ namespace Mirror
         public static byte ScaleFloatToByte(float value, float minValue, float maxValue, byte minTarget, byte maxTarget)
         {
             // note: C# byte - byte => int, hence so many casts
-            int targetRange = maxTarget - minTarget; // max byte - min byte only fits into something bigger
-            float valueRange = maxValue - minValue;
-            float valueRelative = value - minValue;
-            return (byte)(minTarget + (byte)(valueRelative / valueRange * targetRange));
+            var targetRange = maxTarget - minTarget; // max byte - min byte only fits into something bigger
+            var valueRange = maxValue - minValue;
+            var valueRelative = value - minValue;
+            return (byte) (minTarget + (byte) (valueRelative / valueRange * targetRange));
         }
 
         // ScaleByteToFloat(  0, byte.MinValue, byte.MaxValue, -1, 1) => -1
@@ -24,10 +24,10 @@ namespace Mirror
         public static float ScaleByteToFloat(byte value, byte minValue, byte maxValue, float minTarget, float maxTarget)
         {
             // note: C# byte - byte => int, hence so many casts
-            float targetRange = maxTarget - minTarget;
-            byte valueRange = (byte)(maxValue - minValue);
-            byte valueRelative = (byte)(value - minValue);
-            return minTarget + (valueRelative / (float)valueRange * targetRange);
+            var targetRange = maxTarget - minTarget;
+            var valueRange = (byte) (maxValue - minValue);
+            var valueRelative = (byte) (value - minValue);
+            return minTarget + valueRelative / (float) valueRange * targetRange;
         }
 
         // eulerAngles have 3 floats, putting them into 2 bytes of [x,y],[z,0]
@@ -36,24 +36,24 @@ namespace Mirror
         public static ushort PackThreeFloatsIntoUShort(float u, float v, float w, float minValue, float maxValue)
         {
             // 5 bits max value = 1+2+4+8+16 = 31 = 0x1F
-            byte lower = ScaleFloatToByte(u, minValue, maxValue, 0x00, 0x1F);
-            byte middle = ScaleFloatToByte(v, minValue, maxValue, 0x00, 0x1F);
-            byte upper = ScaleFloatToByte(w, minValue, maxValue, 0x00, 0x1F);
-            ushort combined = (ushort)(upper << 10 | middle << 5 | lower);
+            var lower = ScaleFloatToByte(u, minValue, maxValue, 0x00, 0x1F);
+            var middle = ScaleFloatToByte(v, minValue, maxValue, 0x00, 0x1F);
+            var upper = ScaleFloatToByte(w, minValue, maxValue, 0x00, 0x1F);
+            var combined = (ushort) ((upper << 10) | (middle << 5) | lower);
             return combined;
         }
 
         // see PackThreeFloatsIntoUShort for explanation
         public static Vector3 UnpackUShortIntoThreeFloats(ushort combined, float minTarget, float maxTarget)
         {
-            byte lower = (byte)(combined & 0x1F);
-            byte middle = (byte)((combined >> 5) & 0x1F);
-            byte upper = (byte)(combined >> 10); // nothing on the left, no & needed
+            var lower = (byte) (combined & 0x1F);
+            var middle = (byte) ((combined >> 5) & 0x1F);
+            var upper = (byte) (combined >> 10); // nothing on the left, no & needed
 
             // note: we have to use 4 bits per float, so between 0x00 and 0x0F
-            float u = ScaleByteToFloat(lower, 0x00, 0x1F, minTarget, maxTarget);
-            float v = ScaleByteToFloat(middle, 0x00, 0x1F, minTarget, maxTarget);
-            float w = ScaleByteToFloat(upper, 0x00, 0x1F, minTarget, maxTarget);
+            var u = ScaleByteToFloat(lower, 0x00, 0x1F, minTarget, maxTarget);
+            var v = ScaleByteToFloat(middle, 0x00, 0x1F, minTarget, maxTarget);
+            var w = ScaleByteToFloat(upper, 0x00, 0x1F, minTarget, maxTarget);
             return new Vector3(u, v, w);
         }
     }

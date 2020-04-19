@@ -9,7 +9,6 @@ using Ninja.WebSockets;
 
 namespace Mirror.Websocket
 {
-
     public class Client
     {
         public event Action Connected;
@@ -17,16 +16,16 @@ namespace Mirror.Websocket
         public event Action Disconnected;
         public event Action<Exception> ReceivedError;
 
-        const int MaxMessageSize = 1024 * 256;
-        WebSocket webSocket;
-        CancellationTokenSource cancellation;
+        private const int MaxMessageSize = 1024 * 256;
+        private WebSocket webSocket;
+        private CancellationTokenSource cancellation;
 
         public bool NoDelay = true;
 
         public bool Connecting { get; set; }
         public bool IsConnected { get; set; }
 
-        Uri uri;
+        private Uri uri;
 
         public async void Connect(Uri uri)
         {
@@ -37,11 +36,12 @@ namespace Mirror.Websocket
                 ReceivedError?.Invoke(new Exception("Client already connected"));
                 return;
             }
+
             this.uri = uri;
             // We are connecting from now until Connect succeeds or fails
             Connecting = true;
 
-            WebSocketClientOptions options = new WebSocketClientOptions()
+            var options = new WebSocketClientOptions()
             {
                 NoDelay = true,
                 KeepAliveInterval = TimeSpan.Zero,
@@ -50,13 +50,13 @@ namespace Mirror.Websocket
 
             cancellation = new CancellationTokenSource();
 
-            WebSocketClientFactory clientFactory = new WebSocketClientFactory();
+            var clientFactory = new WebSocketClientFactory();
 
             try
             {
                 using (webSocket = await clientFactory.ConnectAsync(uri, options, cancellation.Token))
                 {
-                    CancellationToken token = cancellation.Token;
+                    var token = cancellation.Token;
                     IsConnected = true;
                     Connecting = false;
                     Connected?.Invoke();
@@ -79,13 +79,13 @@ namespace Mirror.Websocket
             }
         }
 
-        async Task ReceiveLoop(WebSocket webSocket, CancellationToken token)
+        private async Task ReceiveLoop(WebSocket webSocket, CancellationToken token)
         {
-            byte[] buffer = new byte[MaxMessageSize];
+            var buffer = new byte[MaxMessageSize];
 
             while (true)
             {
-                WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
+                var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
 
                 if (result == null)
                     break;
@@ -93,7 +93,7 @@ namespace Mirror.Websocket
                     break;
 
                 // we got a text or binary message,  need the full message
-                ArraySegment<byte> data = await ReadFrames(result, webSocket, buffer);
+                var data = await ReadFrames(result, webSocket, buffer);
 
                 if (data.Count == 0)
                     break;
@@ -111,24 +111,27 @@ namespace Mirror.Websocket
 
         // a message might come splitted in multiple frames
         // collect all frames
-        async Task<ArraySegment<byte>> ReadFrames(WebSocketReceiveResult result, WebSocket webSocket, byte[] buffer)
+        private async Task<ArraySegment<byte>> ReadFrames(WebSocketReceiveResult result, WebSocket webSocket,
+            byte[] buffer)
         {
-            int count = result.Count;
+            var count = result.Count;
 
             while (!result.EndOfMessage)
             {
                 if (count >= MaxMessageSize)
                 {
-                    string closeMessage = string.Format("Maximum message size: {0} bytes.", MaxMessageSize);
-                    await webSocket.CloseAsync(WebSocketCloseStatus.MessageTooBig, closeMessage, CancellationToken.None);
+                    var closeMessage = string.Format("Maximum message size: {0} bytes.", MaxMessageSize);
+                    await webSocket.CloseAsync(WebSocketCloseStatus.MessageTooBig, closeMessage,
+                        CancellationToken.None);
                     ReceivedError?.Invoke(new WebSocketException(WebSocketError.HeaderError));
                     return new ArraySegment<byte>();
                 }
 
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer, count, MaxMessageSize - count), CancellationToken.None);
+                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer, count, MaxMessageSize - count),
+                    CancellationToken.None);
                 count += result.Count;
-
             }
+
             return new ArraySegment<byte>(buffer, 0, count);
         }
 
@@ -152,7 +155,7 @@ namespace Mirror.Websocket
         {
             if (webSocket == null)
             {
-                ReceivedError?.Invoke(new SocketException((int)SocketError.NotConnected));
+                ReceivedError?.Invoke(new SocketException((int) SocketError.NotConnected));
                 return;
             }
 
@@ -169,18 +172,11 @@ namespace Mirror.Websocket
 
         public override string ToString()
         {
-            if (IsConnected)
-            {
-                return $"Websocket connected to {uri}";
-            }
-            if (Connecting)
-            {
-                return $"Websocket connecting to {uri}";
-            }
+            if (IsConnected) return $"Websocket connected to {uri}";
+            if (Connecting) return $"Websocket connecting to {uri}";
             return "";
         }
     }
-
 }
 
 #endif

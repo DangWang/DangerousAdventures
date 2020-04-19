@@ -34,13 +34,13 @@ namespace Ninja.WebSockets
     /// </summary>
     public class PingPongManager : IPingPongManager
     {
-        readonly WebSocketImplementation _webSocket;
-        readonly Guid _guid;
-        readonly TimeSpan _keepAliveInterval;
-        readonly Task _pingTask;
-        readonly CancellationToken _cancellationToken;
-        Stopwatch _stopwatch;
-        long _pingSentTicks;
+        private readonly WebSocketImplementation _webSocket;
+        private readonly Guid _guid;
+        private readonly TimeSpan _keepAliveInterval;
+        private readonly Task _pingTask;
+        private readonly CancellationToken _cancellationToken;
+        private Stopwatch _stopwatch;
+        private long _pingSentTicks;
 
         /// <summary>
         /// Raised when a Pong frame is received
@@ -59,22 +59,21 @@ namespace Ninja.WebSockets
         /// </param>
         /// <param name="cancellationToken">The token used to cancel a pending ping send AND the automatic sending of ping messages
         /// if keepAliveInterval is positive</param>
-        public PingPongManager(Guid guid, WebSocket webSocket, TimeSpan keepAliveInterval, CancellationToken cancellationToken)
+        public PingPongManager(Guid guid, WebSocket webSocket, TimeSpan keepAliveInterval,
+            CancellationToken cancellationToken)
         {
-            WebSocketImplementation webSocketImpl = webSocket as WebSocketImplementation;
+            var webSocketImpl = webSocket as WebSocketImplementation;
             _webSocket = webSocketImpl;
             if (_webSocket == null)
-                throw new InvalidCastException("Cannot cast WebSocket to an instance of WebSocketImplementation. Please use the web socket factories to create a web socket");
+                throw new InvalidCastException(
+                    "Cannot cast WebSocket to an instance of WebSocketImplementation. Please use the web socket factories to create a web socket");
             _guid = guid;
             _keepAliveInterval = keepAliveInterval;
             _cancellationToken = cancellationToken;
             webSocketImpl.Pong += WebSocketImpl_Pong;
             _stopwatch = Stopwatch.StartNew();
 
-            if (keepAliveInterval != TimeSpan.Zero)
-            {
-                Task.Run(PingForever, cancellationToken);
-            }
+            if (keepAliveInterval != TimeSpan.Zero) Task.Run(PingForever, cancellationToken);
         }
 
         /// <summary>
@@ -92,9 +91,9 @@ namespace Ninja.WebSockets
             Pong?.Invoke(this, e);
         }
 
-        async Task PingForever()
+        private async Task PingForever()
         {
-            Events.Log.PingPongManagerStarted(_guid, (int)_keepAliveInterval.TotalSeconds);
+            Events.Log.PingPongManagerStarted(_guid, (int) _keepAliveInterval.TotalSeconds);
 
             try
             {
@@ -102,22 +101,21 @@ namespace Ninja.WebSockets
                 {
                     await Task.Delay(_keepAliveInterval, _cancellationToken);
 
-                    if (_webSocket.State != WebSocketState.Open)
-                    {
-                        break;
-                    }
+                    if (_webSocket.State != WebSocketState.Open) break;
 
                     if (_pingSentTicks != 0)
                     {
-                        Events.Log.KeepAliveIntervalExpired(_guid, (int)_keepAliveInterval.TotalSeconds);
-                        await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"No Pong message received in response to a Ping after KeepAliveInterval {_keepAliveInterval}", _cancellationToken);
+                        Events.Log.KeepAliveIntervalExpired(_guid, (int) _keepAliveInterval.TotalSeconds);
+                        await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
+                            $"No Pong message received in response to a Ping after KeepAliveInterval {_keepAliveInterval}",
+                            _cancellationToken);
                         break;
                     }
 
                     if (!_cancellationToken.IsCancellationRequested)
                     {
                         _pingSentTicks = _stopwatch.Elapsed.Ticks;
-                        ArraySegment<byte> buffer = new ArraySegment<byte>(BitConverter.GetBytes(_pingSentTicks));
+                        var buffer = new ArraySegment<byte>(BitConverter.GetBytes(_pingSentTicks));
                         await SendPing(buffer, _cancellationToken);
                     }
                 }
@@ -130,7 +128,7 @@ namespace Ninja.WebSockets
             Events.Log.PingPongManagerEnded(_guid);
         }
 
-        void WebSocketImpl_Pong(object sender, PongEventArgs e)
+        private void WebSocketImpl_Pong(object sender, PongEventArgs e)
         {
             _pingSentTicks = 0;
             OnPong(e);

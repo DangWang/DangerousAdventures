@@ -4,39 +4,38 @@ using UnityEngine;
 
 public class scr_AffectedBy : NetworkBehaviour
 {
-    private Ability.BuffDebuff bd;
+    private Ability.BuffDebuff _bd;
     public bool blindImmunity;
-    private scr_CombatController combatController;
+    private scr_CombatController _combatController;
     public bool drawImmunity;
     public List<Ability.BuffDebuff> effects = new List<Ability.BuffDebuff>(); //the effects that are active
-    [SyncVar]
-    public bool isStunned, isRooted, isInStasis, isSilenced, isBlinded, isTaunted, isSlowed;
+    [SyncVar] public bool isStunned, isRooted, isInStasis, isSilenced, isBlinded, isTaunted, isSlowed;
     public bool rootImmunity;
     public bool silenceImmunity;
     public bool slowImmunity;
     public bool stasisImmunity;
     public bool stunImmunity;
-    private GameObject stunMarker, rootMarker, stasisMarker, silenceMarker, blindMarker, tauntMarker, slowMarker;
+    private GameObject _stunMarker, _rootMarker, _stasisMarker, _silenceMarker, _blindMarker, _tauntMarker, _slowMarker;
     public bool tauntImmunity;
     public bool throwImmunity;
 
     private void Start()
     {
-        stunMarker = transform.Find("Canvas_Local/Marker_Stun").gameObject;
-        rootMarker = transform.Find("Canvas_Local/Marker_Root").gameObject;
-        stasisMarker = transform.Find("Canvas_Local/Marker_Stasis").gameObject;
-        silenceMarker = transform.Find("Canvas_Local/Marker_Silence").gameObject;
-        blindMarker = transform.Find("Canvas_Local/Marker_Blind").gameObject;
-        tauntMarker = transform.Find("Canvas_Local/Marker_Taunt").gameObject;
-        slowMarker = transform.Find("Canvas_Local/Marker_Slow").gameObject;
-        combatController = GetComponent<scr_CombatController>();
-        stunMarker.SetActive(false);
-        rootMarker.SetActive(false);
-        stasisMarker.SetActive(false);
-        silenceMarker.SetActive(false);
-        blindMarker.SetActive(false);
-        tauntMarker.SetActive(false);
-        slowMarker.SetActive(false);
+        _stunMarker = transform.Find("Canvas_Local/Marker_Stun").gameObject;
+        _rootMarker = transform.Find("Canvas_Local/Marker_Root").gameObject;
+        _stasisMarker = transform.Find("Canvas_Local/Marker_Stasis").gameObject;
+        _silenceMarker = transform.Find("Canvas_Local/Marker_Silence").gameObject;
+        _blindMarker = transform.Find("Canvas_Local/Marker_Blind").gameObject;
+        _tauntMarker = transform.Find("Canvas_Local/Marker_Taunt").gameObject;
+        _slowMarker = transform.Find("Canvas_Local/Marker_Slow").gameObject;
+        _combatController = GetComponent<scr_CombatController>();
+        _stunMarker.SetActive(false);
+        _rootMarker.SetActive(false);
+        _stasisMarker.SetActive(false);
+        _silenceMarker.SetActive(false);
+        _blindMarker.SetActive(false);
+        _tauntMarker.SetActive(false);
+        _slowMarker.SetActive(false);
     }
 
     [Command]
@@ -44,6 +43,7 @@ public class scr_AffectedBy : NetworkBehaviour
     {
         OnEndTurn();
     }
+
     public void OnEndTurn()
     {
         UpdateDurations();
@@ -54,13 +54,13 @@ public class scr_AffectedBy : NetworkBehaviour
     public void AddEffect(Ability.BuffDebuff bd)
     {
         effects.Add(bd);
-        combatController = GetComponent<scr_CombatController>();
-        combatController.physicalAttack += bd.physicalAttackMod;
-        combatController.physicalDefense += bd.physicalDefenseMod;
-        combatController.magicalAttack += bd.magicalAttackMod;
-        combatController.magicalDefense += bd.magicalDefenseMod;
-        combatController.pureAttack += bd.pureAttackMod;
-        combatController.pureDefense += bd.pureDefenseMod;
+        _combatController = GetComponent<scr_CombatController>();
+        _combatController.physicalAttack += bd.physicalAttackMod;
+        _combatController.physicalDefense += bd.physicalDefenseMod;
+        _combatController.magicalAttack += bd.magicalAttackMod;
+        _combatController.magicalDefense += bd.magicalDefenseMod;
+        _combatController.pureAttack += bd.pureAttackMod;
+        _combatController.pureDefense += bd.pureDefenseMod;
         UpdateActive();
         RpcUpdateMarkers();
     }
@@ -72,11 +72,11 @@ public class scr_AffectedBy : NetworkBehaviour
             //Reduce the duration. If it's still >= 0 insert the changed effect (effects are immutable).
             if (effects[i].duration >= 0)
             {
-                bd = effects[i];
-                bd.duration--;
+                _bd = effects[i];
+                _bd.duration--;
                 effects.RemoveAt(i);
-                if (bd.duration >= 0)
-                    effects.Insert(i, bd);
+                if (_bd.duration >= 0)
+                    effects.Insert(i, _bd);
                 else
                     i--;
                 if (effects.Count == 0)
@@ -144,12 +144,12 @@ public class scr_AffectedBy : NetworkBehaviour
     [ClientRpc]
     public void RpcUpdateMarkers()
     {
-        stunMarker.SetActive(isStunned);
-        rootMarker.SetActive(isRooted);
-        stasisMarker.SetActive(isInStasis);
-        silenceMarker.SetActive(isSilenced);
-        blindMarker.SetActive(isBlinded);
-        tauntMarker.SetActive(isTaunted);
-        slowMarker.SetActive(isSlowed);
+        _stunMarker.SetActive(isStunned);
+        _rootMarker.SetActive(isRooted);
+        _stasisMarker.SetActive(isInStasis);
+        _silenceMarker.SetActive(isSilenced);
+        _blindMarker.SetActive(isBlinded);
+        _tauntMarker.SetActive(isTaunted);
+        _slowMarker.SetActive(isSlowed);
     }
 }

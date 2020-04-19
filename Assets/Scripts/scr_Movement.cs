@@ -5,19 +5,14 @@ using UnityEngine;
 
 public class scr_Movement : NetworkBehaviour
 {
-    private static GameObject marker;
+    private static GameObject s_marker;
     public List<GameObject> allowedMovement = new List<GameObject>();
-    [SyncVar]
-    public int availableMovement;
-    private GameObject canvasDirections;
-    [SyncVar]
-    public bool hasMoved;
-    [SyncVar]
-    public bool independentDicePool;
-    [SyncVar]
-    public int movementDice;
-    [SyncVar]
-    public Enumerations.Direction myDirection = Enumerations.Direction.Choose;
+    [SyncVar] public int availableMovement;
+    private GameObject _canvasDirections;
+    [SyncVar] public bool hasMoved;
+    [SyncVar] public bool independentDicePool;
+    [SyncVar] public int movementDice;
+    [SyncVar] public Enumerations.Direction myDirection = Enumerations.Direction.Choose;
     public GameObject myTile;
     public scr_Player parentScript;
 
@@ -26,9 +21,9 @@ public class scr_Movement : NetworkBehaviour
 
     private void Start()
     {
-        marker = Resources.Load("marker") as GameObject;
-        canvasDirections = transform.Find("Canvas_Direction").gameObject;
-        canvasDirections.SetActive(false);
+        s_marker = Resources.Load("marker") as GameObject;
+        _canvasDirections = transform.Find("Canvas_Direction").gameObject;
+        _canvasDirections.SetActive(false);
         //parentScript = GetComponent<scr_Player>();
     }
 
@@ -49,7 +44,7 @@ public class scr_Movement : NetworkBehaviour
         myDirection = Enumerations.Direction.Choose;
         myTile = GameObject.Find(tileName);
     }
-    
+
 
     public void OnSelectedUpdate()
     {
@@ -57,20 +52,19 @@ public class scr_Movement : NetworkBehaviour
             availableMovement = parentScript.sharedRemainingMovement;
         if (myDirection == Enumerations.Direction.Choose)
         {
-            myDirection = Enumerations.ChooseDirection(canvasDirections);
+            myDirection = Enumerations.ChooseDirection(_canvasDirections);
             if (myDirection != Enumerations.Direction.Choose)
             {
                 allowedMovement = GetAllowedMovement(myTile, ref myDirection, availableMovement);
-                if (allowedMovement.Count == 0)
-                {
-                    print("wtf");
-                }
+                if (allowedMovement.Count == 0) print("wtf");
+
                 AddAllowedMovementMarker(allowedMovement);
             }
+
             CmdUpdateDirection(myDirection);
         }
 
-        if (Input.GetKeyUp(KeyCode.R) && hasMoved == false) 
+        if (Input.GetKeyUp(KeyCode.R) && hasMoved == false)
             myDirection = Enumerations.Direction.Choose;
         if (Input.GetMouseButtonUp(1))
         {
@@ -80,7 +74,7 @@ public class scr_Movement : NetworkBehaviour
                 && parentScript.altSelected.GetComponent<script_Tile>().occupied == false)
                 if (script_BoardController.GetTileDistance(myTile, parentScript.altSelected) <= availableMovement)
                     CmdMove(parentScript.altSelected.name);
-                    //Move(parentScript.altSelected, allowedMovement);
+            //Move(parentScript.altSelected, allowedMovement);
             RemoveAllowedMovementMarker(allowedMovement);
             // allowedMovement = GetAllowedMovement(myTile, ref myDirection, availableMovement);
             // AddAllowedMovementMarker(allowedMovement);
@@ -95,7 +89,7 @@ public class scr_Movement : NetworkBehaviour
 
     public void Unselected()
     {
-        canvasDirections.SetActive(false);
+        _canvasDirections.SetActive(false);
         try
         {
             RemoveAllowedMovementMarker(allowedMovement);
@@ -107,16 +101,16 @@ public class scr_Movement : NetworkBehaviour
 
         allowedMovement.Clear();
     }
-    
-    
+
+
     [Command]
     private void CmdMove(string toTileName)
     {
-        GameObject toTile = GameObject.Find(toTileName);
+        var toTile = GameObject.Find(toTileName);
         allowedMovement = GetAllowedMovement(myTile, ref myDirection, availableMovement);
         Move(toTile, allowedMovement);
     }
-    
+
 
     public int Move(GameObject toTile, List<GameObject> allowedMovement)
     {
@@ -148,6 +142,7 @@ public class scr_Movement : NetworkBehaviour
             if (activatedTrap)
                 break;
         }
+
         RpcUpdateMyTile(myTile.name);
         return tilesMoved;
     }
@@ -195,7 +190,7 @@ public class scr_Movement : NetworkBehaviour
             }
         }
 
-        if (i >= availableMovement) 
+        if (i >= availableMovement)
             return tiles;
         Debug.LogError("problem");
         return null;
@@ -203,30 +198,24 @@ public class scr_Movement : NetworkBehaviour
 
     public void AddAllowedMovementMarker(List<GameObject> allowedMovement)
     {
-        if(hasAuthority)
-        {
+        if (hasAuthority)
             foreach (var g in allowedMovement)
             {
-                var mark = Instantiate(marker, g.transform.position, Quaternion.identity);
+                var mark = Instantiate(s_marker, g.transform.position, Quaternion.identity);
                 mark.name = "Movement_Marker";
                 mark.transform.parent = g.transform;
             }
-        }
     }
 
     public void RemoveAllowedMovementMarker(List<GameObject> allowedMovement)
     {
-        if(hasAuthority)
-        {
+        if (hasAuthority)
             if (allowedMovement.Count > 0)
-            {
                 foreach (var g in allowedMovement)
                 {
                     var mark = g.transform.Find("Movement_Marker").gameObject;
                     if (mark != null)
                         Destroy(mark);
                 }
-            }
-        }
     }
 }

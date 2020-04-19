@@ -1,6 +1,7 @@
 Rules:
 1. 		One commit per PR, if you have made multiple commits locally you will need to squash them
 2. 		If there is a GitHub issue related to your PR your commit message should start with 'issue (number)' e.g. 'issue 31: small string fix'
+3.		Before making a Pull Request you should check that your code follows the coding rules presented in code_style_guide.txt
 
 General:
 1. 		Fork on GitHub, which you probably did to get here

@@ -42,8 +42,8 @@ namespace Ninja.WebSockets
     /// </summary>
     public class WebSocketClientFactory : IWebSocketClientFactory
     {
-        readonly Func<MemoryStream> _bufferFactory;
-        readonly IBufferPool _bufferPool;
+        private readonly Func<MemoryStream> _bufferFactory;
+        private readonly IBufferPool _bufferPool;
 
         /// <summary>
         /// Initialises a new instance of the WebSocketClientFactory class without caring about internal buffers
@@ -81,17 +81,18 @@ namespace Ninja.WebSockets
         /// <param name="options">The WebSocket client options</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>A connected web socket instance</returns>
-        public async Task<WebSocket> ConnectAsync(Uri uri, WebSocketClientOptions options, CancellationToken token = default(CancellationToken))
+        public async Task<WebSocket> ConnectAsync(Uri uri, WebSocketClientOptions options,
+            CancellationToken token = default(CancellationToken))
         {
-            Guid guid = Guid.NewGuid();
-            string host = uri.Host;
-            int port = uri.Port;
-            TcpClient tcpClient = new TcpClient(AddressFamily.InterNetworkV6);
+            var guid = Guid.NewGuid();
+            var host = uri.Host;
+            var port = uri.Port;
+            var tcpClient = new TcpClient(AddressFamily.InterNetworkV6);
             tcpClient.NoDelay = options.NoDelay;
             tcpClient.Client.DualMode = true;
-            string uriScheme = uri.Scheme.ToLower();
-            bool useSsl = uriScheme == "wss" || uriScheme == "https";
-            if (IPAddress.TryParse(host, out IPAddress ipAddress))
+            var uriScheme = uri.Scheme.ToLower();
+            var useSsl = uriScheme == "wss" || uriScheme == "https";
+            if (IPAddress.TryParse(host, out var ipAddress))
             {
                 Events.Log.ClientConnectingToIpAddress(guid, ipAddress.ToString(), port);
                 await tcpClient.ConnectAsync(ipAddress, port);
@@ -103,7 +104,7 @@ namespace Ninja.WebSockets
             }
 
             token.ThrowIfCancellationRequested();
-            Stream stream = GetStream(guid, tcpClient, useSsl, host);
+            var stream = GetStream(guid, tcpClient, useSsl, host);
             return await PerformHandshake(guid, uri, stream, options, token);
         }
 
@@ -119,16 +120,20 @@ namespace Ninja.WebSockets
         /// <param name="options">The WebSocket client options</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns></returns>
-        public async Task<WebSocket> ConnectAsync(Stream responseStream, string secWebSocketKey, WebSocketClientOptions options, CancellationToken token = default(CancellationToken))
+        public async Task<WebSocket> ConnectAsync(Stream responseStream, string secWebSocketKey,
+            WebSocketClientOptions options, CancellationToken token = default(CancellationToken))
         {
-            Guid guid = Guid.NewGuid();
-            return await ConnectAsync(guid, responseStream, secWebSocketKey, options.KeepAliveInterval, options.SecWebSocketExtensions, options.IncludeExceptionInCloseResponse, token);
+            var guid = Guid.NewGuid();
+            return await ConnectAsync(guid, responseStream, secWebSocketKey, options.KeepAliveInterval,
+                options.SecWebSocketExtensions, options.IncludeExceptionInCloseResponse, token);
         }
 
-        async Task<WebSocket> ConnectAsync(Guid guid, Stream responseStream, string secWebSocketKey, TimeSpan keepAliveInterval, string secWebSocketExtensions, bool includeExceptionInCloseResponse, CancellationToken token)
+        private async Task<WebSocket> ConnectAsync(Guid guid, Stream responseStream, string secWebSocketKey,
+            TimeSpan keepAliveInterval, string secWebSocketExtensions, bool includeExceptionInCloseResponse,
+            CancellationToken token)
         {
             Events.Log.ReadingHttpResponse(guid);
-            string response = string.Empty;
+            var response = string.Empty;
 
             try
             {
@@ -142,36 +147,36 @@ namespace Ninja.WebSockets
 
             ThrowIfInvalidResponseCode(response);
             ThrowIfInvalidAcceptString(guid, response, secWebSocketKey);
-            string subProtocol = GetSubProtocolFromHeader(response);
-            return new WebSocketImplementation(guid, _bufferFactory, responseStream, keepAliveInterval, secWebSocketExtensions, includeExceptionInCloseResponse, true, subProtocol);
+            var subProtocol = GetSubProtocolFromHeader(response);
+            return new WebSocketImplementation(guid, _bufferFactory, responseStream, keepAliveInterval,
+                secWebSocketExtensions, includeExceptionInCloseResponse, true, subProtocol);
         }
 
-        string GetSubProtocolFromHeader(string response)
+        private string GetSubProtocolFromHeader(string response)
         {
             // make sure we escape the accept string which could contain special regex characters
-            string regexPattern = "Sec-WebSocket-Protocol: (.*)";
-            Regex regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-            Match match = regex.Match(response);
-            if (match.Success)
-            {
-                return match.Groups[1].Value.Trim();
-            }
+            var regexPattern = "Sec-WebSocket-Protocol: (.*)";
+            var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+            var match = regex.Match(response);
+            if (match.Success) return match.Groups[1].Value.Trim();
 
             return null;
         }
 
-        void ThrowIfInvalidAcceptString(Guid guid, string response, string secWebSocketKey)
+        private void ThrowIfInvalidAcceptString(Guid guid, string response, string secWebSocketKey)
         {
             // make sure we escape the accept string which could contain special regex characters
-            string regexPattern = "Sec-WebSocket-Accept: (.*)";
-            Regex regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
-            string actualAcceptString = regex.Match(response).Groups[1].Value.Trim();
+            var regexPattern = "Sec-WebSocket-Accept: (.*)";
+            var regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+            var actualAcceptString = regex.Match(response).Groups[1].Value.Trim();
 
             // check the accept string
-            string expectedAcceptString = HttpHelper.ComputeSocketAcceptString(secWebSocketKey);
+            var expectedAcceptString = HttpHelper.ComputeSocketAcceptString(secWebSocketKey);
             if (expectedAcceptString != actualAcceptString)
             {
-                string warning = string.Format($"Handshake failed because the accept string from the server '{expectedAcceptString}' was not the expected string '{actualAcceptString}'");
+                var warning =
+                    string.Format(
+                        $"Handshake failed because the accept string from the server '{expectedAcceptString}' was not the expected string '{actualAcceptString}'");
                 Events.Log.HandshakeFailure(guid, warning);
                 throw new WebSocketHandshakeFailedException(warning);
             }
@@ -181,38 +186,34 @@ namespace Ninja.WebSockets
             }
         }
 
-        void ThrowIfInvalidResponseCode(string responseHeader)
+        private void ThrowIfInvalidResponseCode(string responseHeader)
         {
-            string responseCode = HttpHelper.ReadHttpResponseCode(responseHeader);
+            var responseCode = HttpHelper.ReadHttpResponseCode(responseHeader);
             if (!string.Equals(responseCode, "101 Switching Protocols", StringComparison.InvariantCultureIgnoreCase))
             {
-                string[] lines = responseHeader.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                var lines = responseHeader.Split(new string[] {"\r\n"}, StringSplitOptions.None);
 
-                for (int i = 0; i < lines.Length; i++)
-                {
+                for (var i = 0; i < lines.Length; i++)
                     // if there is more to the message than just the header
                     if (string.IsNullOrWhiteSpace(lines[i]))
                     {
-                        StringBuilder builder = new StringBuilder();
-                        for (int j = i + 1; j < lines.Length - 1; j++)
-                        {
-                            builder.AppendLine(lines[j]);
-                        }
+                        var builder = new StringBuilder();
+                        for (var j = i + 1; j < lines.Length - 1; j++) builder.AppendLine(lines[j]);
 
-                        string responseDetails = builder.ToString();
+                        var responseDetails = builder.ToString();
                         throw new InvalidHttpResponseCodeException(responseCode, responseDetails, responseHeader);
                     }
-                }
             }
         }
 
-        Stream GetStream(Guid guid, TcpClient tcpClient, bool isSecure, string host)
+        private Stream GetStream(Guid guid, TcpClient tcpClient, bool isSecure, string host)
         {
             Stream stream = tcpClient.GetStream();
 
             if (isSecure)
             {
-                SslStream sslStream = new SslStream(stream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+                var sslStream = new SslStream(stream, false,
+                    new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
                 Events.Log.AttemtingToSecureSslConnection(guid);
 
                 // This will throw an AuthenticationException if the certificate is not valid
@@ -231,12 +232,10 @@ namespace Ninja.WebSockets
         /// Invoked by the RemoteCertificateValidationDelegate
         /// If you want to ignore certificate errors (for debugging) then return true
         /// </summary>
-        static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
         {
-            if (sslPolicyErrors == SslPolicyErrors.None)
-            {
-                return true;
-            }
+            if (sslPolicyErrors == SslPolicyErrors.None) return true;
 
             Events.Log.SslCertificateError(sslPolicyErrors);
 
@@ -244,7 +243,7 @@ namespace Ninja.WebSockets
             return false;
         }
 
-        static string GetAdditionalHeaders(Dictionary<string, string> additionalHeaders)
+        private static string GetAdditionalHeaders(Dictionary<string, string> additionalHeaders)
         {
             if (additionalHeaders == null || additionalHeaders.Count == 0)
             {
@@ -252,34 +251,32 @@ namespace Ninja.WebSockets
             }
             else
             {
-                StringBuilder builder = new StringBuilder();
-                foreach (KeyValuePair<string, string> pair in additionalHeaders)
-                {
-                    builder.Append($"{pair.Key}: {pair.Value}\r\n");
-                }
+                var builder = new StringBuilder();
+                foreach (var pair in additionalHeaders) builder.Append($"{pair.Key}: {pair.Value}\r\n");
 
                 return builder.ToString();
             }
         }
 
-        async Task<WebSocket> PerformHandshake(Guid guid, Uri uri, Stream stream, WebSocketClientOptions options, CancellationToken token)
+        private async Task<WebSocket> PerformHandshake(Guid guid, Uri uri, Stream stream,
+            WebSocketClientOptions options, CancellationToken token)
         {
-            Random rand = new Random();
-            byte[] keyAsBytes = new byte[16];
+            var rand = new Random();
+            var keyAsBytes = new byte[16];
             rand.NextBytes(keyAsBytes);
-            string secWebSocketKey = Convert.ToBase64String(keyAsBytes);
-            string additionalHeaders = GetAdditionalHeaders(options.AdditionalHttpHeaders);
-            string handshakeHttpRequest = $"GET {uri.PathAndQuery} HTTP/1.1\r\n" +
-                                          $"Host: {uri.Host}:{uri.Port}\r\n" +
-                                           "Upgrade: websocket\r\n" +
-                                           "Connection: Upgrade\r\n" +
-                                          $"Sec-WebSocket-Key: {secWebSocketKey}\r\n" +
-                                          $"Origin: http://{uri.Host}:{uri.Port}\r\n" +
-                                          $"Sec-WebSocket-Protocol: {options.SecWebSocketProtocol}\r\n" +
-                                          additionalHeaders +
-                                           "Sec-WebSocket-Version: 13\r\n\r\n";
+            var secWebSocketKey = Convert.ToBase64String(keyAsBytes);
+            var additionalHeaders = GetAdditionalHeaders(options.AdditionalHttpHeaders);
+            var handshakeHttpRequest = $"GET {uri.PathAndQuery} HTTP/1.1\r\n" +
+                                       $"Host: {uri.Host}:{uri.Port}\r\n" +
+                                       "Upgrade: websocket\r\n" +
+                                       "Connection: Upgrade\r\n" +
+                                       $"Sec-WebSocket-Key: {secWebSocketKey}\r\n" +
+                                       $"Origin: http://{uri.Host}:{uri.Port}\r\n" +
+                                       $"Sec-WebSocket-Protocol: {options.SecWebSocketProtocol}\r\n" +
+                                       additionalHeaders +
+                                       "Sec-WebSocket-Version: 13\r\n\r\n";
 
-            byte[] httpRequest = Encoding.UTF8.GetBytes(handshakeHttpRequest);
+            var httpRequest = Encoding.UTF8.GetBytes(handshakeHttpRequest);
             stream.Write(httpRequest, 0, httpRequest.Length);
             Events.Log.HandshakeSent(guid, handshakeHttpRequest);
             return await ConnectAsync(stream, secWebSocketKey, options, token);

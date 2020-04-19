@@ -7,17 +7,14 @@ namespace Ninja.WebSockets.Exceptions
     {
         public SecWebSocketKeyMissingException() : base()
         {
-
         }
 
         public SecWebSocketKeyMissingException(string message) : base(message)
         {
-
         }
 
         public SecWebSocketKeyMissingException(string message, Exception inner) : base(message, inner)
         {
-
         }
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class script_AffectedBy : MonoBehaviour
 {
-    private Ability.BuffDebuff bd;
+    private Ability.BuffDebuff _bd;
     public List<Ability.BuffDebuff> effects = new List<Ability.BuffDebuff>();
     public bool getsStunned;
 
@@ -13,11 +13,11 @@ public class script_AffectedBy : MonoBehaviour
         {
             if (effects[i].duration >= 0)
             {
-                bd = effects[i];
-                bd.duration--;
+                _bd = effects[i];
+                _bd.duration--;
                 effects.RemoveAt(i);
-                if (bd.duration >= 0)
-                    effects.Insert(i, bd);
+                if (_bd.duration >= 0)
+                    effects.Insert(i, _bd);
                 else
                     i--;
                 if (effects.Count == 0)

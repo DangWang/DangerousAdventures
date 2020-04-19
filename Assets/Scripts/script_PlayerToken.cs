@@ -7,27 +7,27 @@ namespace Mirror
 {
     public class script_PlayerToken : MonoBehaviour, ISelector, IPlayer, ICombatant
     {
-        private List<GameObject> allowedMovement = new List<GameObject>();
+        private List<GameObject> _allowedMovement = new List<GameObject>();
         public int attackDice;
-        private bool attackedThisTurn;
+        private bool _attackedThisTurn;
         public int availableMovement;
-        private Text availableMovementField;
+        private Text _availableMovementField;
 
-        private Canvas canvasLocal, canvasWorld;
+        private Canvas _canvasLocal, _canvasWorld;
         public int defenceDice;
-        private bool hasMoved;
-        private Slider healthBar;
-        private Text hitpointsField;
-        private GameObject inventoryHUD, markerStun;
+        private bool _hasMoved;
+        private Slider _healthBar;
+        private Text _hitpointsField;
+        private GameObject _inventoryHUD, _markerStun;
         public int lives = 3;
         public int magicalAttackDice;
         public int magicalDefenceDice;
         public int movementDice;
         public Enumerations.Direction myDirection = Enumerations.Direction.Choose;
-        private scr_AffectedBy myScript_AffectedBy;
-        private script_BoardController myScript_BoardController;
-        private script_MovementParser myScript_MovementParser;
-        private GameObject neighbor, myTile, directions;
+        private scr_AffectedBy _myScript_AffectedBy;
+        private script_BoardController _myScript_BoardController;
+        private script_MovementParser _myScript_MovementParser;
+        private GameObject _neighbor, _myTile, _directions;
         public bool placed;
         public int pureAttackDice;
         public int range;
@@ -40,18 +40,18 @@ namespace Mirror
         public void Attack(ICombatant target, Enumerations.DamageType damageType)
         {
             var dice = new Enumerations.AttackDie[attackDice];
-            var set = new int[6] {0, 0, 1, 1, 2, 3};
+            var set = new int[6] { 0, 0, 1, 1, 2, 3 };
             print("Attacking");
             for (var i = 0; i < attackDice; i++)
             {
                 var j = set[Utilities.RollDice(1) - 1];
-                dice[i] = (Enumerations.AttackDie) j;
+                dice[i] = (Enumerations.AttackDie)j;
                 print("Attack die " + i + ":" + dice[i]);
             }
 
             target.Defend(dice, damageType, this);
 
-            attackedThisTurn = true;
+            _attackedThisTurn = true;
         }
 
         //TODO Need to add magical defense dice!!
@@ -62,12 +62,12 @@ namespace Mirror
 
             if (damageType == Enumerations.DamageType.Physical)
             {
-                var set = new int[6] {0, 0, 1, 1, 2, 3};
+                var set = new int[6] { 0, 0, 1, 1, 2, 3 };
                 defendDice = new Enumerations.DefenseDie[defenceDice];
                 for (var i = 0; i < defenceDice; i++)
                 {
                     var j = set[Utilities.RollDice(1) - 1];
-                    defendDice[i] = (Enumerations.DefenseDie) j;
+                    defendDice[i] = (Enumerations.DefenseDie)j;
                     print("Defense die " + i + ":" + defendDice[i]);
                 }
             }
@@ -75,7 +75,7 @@ namespace Mirror
             {
                 defendDice = new Enumerations.DefenseDie[magicalDefenceDice];
                 for (var i = 0; i < magicalDefenceDice; i++)
-                    defendDice[i] = (Enumerations.DefenseDie) Utilities.RollDice(1);
+                    defendDice[i] = (Enumerations.DefenseDie)Utilities.RollDice(1);
             }
             else
             {
@@ -181,14 +181,14 @@ namespace Mirror
                     if (die[i] == Enumerations.AttackDie.hit) TakeDamage(1);
                 }
 
-            hitpointsField.text = myHitpoints.ToString();
+            _hitpointsField.text = myHitpoints.ToString();
         }
 
         public void TakeDamage(int damage)
         {
             myHitpoints -= damage;
-            healthBar.value = myHitpoints;
-            hitpointsField.text = myHitpoints.ToString();
+            _healthBar.value = myHitpoints;
+            _hitpointsField.text = myHitpoints.ToString();
             print(myHitpoints);
             if (damage == 1)
             {
@@ -208,12 +208,12 @@ namespace Mirror
 
         public void EndTurn()
         {
-            myScript_AffectedBy.OnEndTurn();
-            canvasLocal.gameObject.SetActive(false);
-            canvasWorld.gameObject.SetActive(false);
+            _myScript_AffectedBy.OnEndTurn();
+            _canvasLocal.gameObject.SetActive(false);
+            _canvasWorld.gameObject.SetActive(false);
             //script_GameManager.CmdNextTurn();
-            if (allowedMovement.Count > 0)
-                script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
+            if (_allowedMovement.Count > 0)
+                script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
             //script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
         }
 
@@ -223,85 +223,88 @@ namespace Mirror
 
         private void Start()
         {
-            myScript_BoardController = GameObject.Find("Board").GetComponent<script_BoardController>();
-            myScript_MovementParser = GetComponent<script_MovementParser>();
-            myScript_AffectedBy = GetComponent<scr_AffectedBy>();
-            canvasLocal = transform.Find("Canvas_Local").GetComponent<Canvas>();
-            canvasWorld = transform.Find("Canvas_World").GetComponent<Canvas>();
-            directions = transform.Find("Canvas_Local/Directions").gameObject;
-            availableMovementField = transform.Find("Canvas_World/AdventurerHUD/Movement/Text").GetComponent<Text>();
-            inventoryHUD = transform.Find("Canvas_World/InventoryHUD").gameObject;
-            hitpointsField = transform.Find("Canvas_World/AdventurerHUD/Health/Text").GetComponent<Text>();
-            healthBar = transform.Find("Canvas_Local/Healthbar").GetComponent<Slider>();
-            markerStun = transform.Find("Canvas_Local/Marker_Stun").gameObject;
+            _myScript_BoardController = GameObject.Find("Board").GetComponent<script_BoardController>();
+            _myScript_MovementParser = GetComponent<script_MovementParser>();
+            _myScript_AffectedBy = GetComponent<scr_AffectedBy>();
+            _canvasLocal = transform.Find("Canvas_Local").GetComponent<Canvas>();
+            _canvasWorld = transform.Find("Canvas_World").GetComponent<Canvas>();
+            _directions = transform.Find("Canvas_Local/Directions").gameObject;
+            _availableMovementField = transform.Find("Canvas_World/AdventurerHUD/Movement/Text").GetComponent<Text>();
+            _inventoryHUD = transform.Find("Canvas_World/InventoryHUD").gameObject;
+            _hitpointsField = transform.Find("Canvas_World/AdventurerHUD/Health/Text").GetComponent<Text>();
+            _healthBar = transform.Find("Canvas_Local/Healthbar").GetComponent<Slider>();
+            _markerStun = transform.Find("Canvas_Local/Marker_Stun").gameObject;
             myHitpoints = 10;
-            hitpointsField.text = myHitpoints.ToString();
-            healthBar.value = myHitpoints;
-            healthBar.maxValue = myHitpoints;
-            healthBar.gameObject.SetActive(false);
-            markerStun.SetActive(false);
+            _hitpointsField.text = myHitpoints.ToString();
+            _healthBar.value = myHitpoints;
+            _healthBar.maxValue = myHitpoints;
+            _healthBar.gameObject.SetActive(false);
+            _markerStun.SetActive(false);
 
-            inventoryHUD.SetActive(false);
-            canvasLocal.gameObject.SetActive(false);
-            canvasWorld.gameObject.SetActive(false);
+            _inventoryHUD.SetActive(false);
+            _canvasLocal.gameObject.SetActive(false);
+            _canvasWorld.gameObject.SetActive(false);
         }
 
         private void Update()
         {
-            if (Input.GetKeyUp(KeyCode.Tab)) healthBar.gameObject.SetActive(!healthBar.gameObject.activeInHierarchy);
+            if (Input.GetKeyUp(KeyCode.Tab)) _healthBar.gameObject.SetActive(!_healthBar.gameObject.activeInHierarchy);
             if (Input.GetKeyUp(KeyCode.N) && beginMyTurn == false && isMyTurn) EndTurn();
             if (beginMyTurn)
             {
-                canvasLocal.gameObject.SetActive(true);
-                canvasWorld.gameObject.SetActive(true);
+                _canvasLocal.gameObject.SetActive(true);
+                _canvasWorld.gameObject.SetActive(true);
                 myDirection = Enumerations.Direction.Choose;
                 availableMovement = Utilities.RollDice(movementDice);
-                availableMovementField.text = availableMovement.ToString();
+                _availableMovementField.text = availableMovement.ToString();
                 beginMyTurn = false;
-                attackedThisTurn = false;
+                _attackedThisTurn = false;
 
-                script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
-                allowedMovement =
-                    myScript_MovementParser.GetAllowedMovement(myTile, ref myDirection, availableMovement);
-                script_MovementPainter.AddAllowedMovementMarker(allowedMovement);
+                script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
+                _allowedMovement =
+                    _myScript_MovementParser.GetAllowedMovement(_myTile, ref myDirection, availableMovement);
+                script_MovementPainter.AddAllowedMovementMarker(_allowedMovement);
             }
             else if (isMyTurn)
             {
-                if (placed && myScript_AffectedBy.isStunned == false)
+                if (placed && _myScript_AffectedBy.isStunned == false)
                 {
                     if (myDirection == Enumerations.Direction.Choose)
                     {
-                        myDirection = Enumerations.ChooseDirection(directions);
+                        myDirection = Enumerations.ChooseDirection(_directions);
                         //script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
-                        allowedMovement =
-                            myScript_MovementParser.GetAllowedMovement(myTile, ref myDirection, availableMovement);
-                        script_MovementPainter.AddAllowedMovementMarker(allowedMovement);
+                        _allowedMovement =
+                            _myScript_MovementParser.GetAllowedMovement(_myTile, ref myDirection, availableMovement);
+                        script_MovementPainter.AddAllowedMovementMarker(_allowedMovement);
                     }
 
-                    if (Input.GetKeyUp(KeyCode.R) && hasMoved == false) myDirection = Enumerations.Direction.Choose;
+                    if (Input.GetKeyUp(KeyCode.R) && _hasMoved == false) myDirection = Enumerations.Direction.Choose;
 
                     if (Input.GetMouseButtonUp(1))
                     {
                         altSelected = script_SelectObject.ReturnAlternateClick();
 
-                        if (allowedMovement.Contains(altSelected))
-                            if (script_BoardController.GetTileDistance(myTile, altSelected) <= availableMovement)
-                                Move(altSelected, allowedMovement);
-                        script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
-                        allowedMovement =
-                            myScript_MovementParser.GetAllowedMovement(myTile, ref myDirection, availableMovement);
-                        script_MovementPainter.AddAllowedMovementMarker(allowedMovement);
+                        if (_allowedMovement.Contains(altSelected))
+                            if (script_BoardController.GetTileDistance(_myTile, altSelected) <= availableMovement)
+                                Move(altSelected, _allowedMovement);
+                        script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
+                        _allowedMovement =
+                            _myScript_MovementParser.GetAllowedMovement(_myTile, ref myDirection, availableMovement);
+                        script_MovementPainter.AddAllowedMovementMarker(_allowedMovement);
                     }
 
                     if (Input.GetMouseButtonUp(0))
                     {
                         if (selected.tag == "Monster" &&
-                            script_BoardController.GetTileDistance(myTile, selected) <= range &&
-                            attackedThisTurn == false)
+                            script_BoardController.GetTileDistance(_myTile, selected) <= range &&
+                            _attackedThisTurn == false)
                             Attack(selected.GetComponent<ICombatant>(), Enumerations.DamageType.Physical);
                         if ((selected.tag == "Door" || selected.tag == "OpenDoor") &&
-                            script_BoardController.GetTileDistance(myTile, selected) <= 1){}
-//                            selected.GetComponent<scr_Door>().ToggleDoor();
+                            script_BoardController.GetTileDistance(_myTile, selected) <= 1)
+                        {
+                        }
+
+                        //                            selected.GetComponent<scr_Door>().ToggleDoor();
                     }
                 }
 
@@ -311,7 +314,7 @@ namespace Mirror
                         if (selected.tag == "PlayerSpawn")
                         {
                             transform.position = selected.transform.position;
-                            myTile = selected;
+                            _myTile = selected;
                             placed = true;
                         }
                         else
@@ -328,9 +331,9 @@ namespace Mirror
             GameObject tileTemp;
             var index = 0;
             bool activatedTrap;
-            while (myTile != toTile)
+            while (_myTile != toTile)
             {
-//            print(index);
+                //            print(index);
                 tileTemp = allowedMovement.ElementAt(index++);
                 if (tileTemp.GetComponent<script_Tile>().occupied)
                 {
@@ -338,17 +341,17 @@ namespace Mirror
                     break;
                 }
 
-                hasMoved = true;
-                myTile.GetComponent<script_Tile>().occupied = false;
-                myTile.GetComponent<script_Tile>().occupier = null;
-                myTile = tileTemp;
-                myTile.GetComponent<script_Tile>().occupied = true;
-                myTile.GetComponent<script_Tile>().occupier = gameObject;
-                transform.position = myTile.transform.position;
+                _hasMoved = true;
+                _myTile.GetComponent<script_Tile>().occupied = false;
+                _myTile.GetComponent<script_Tile>().occupier = null;
+                _myTile = tileTemp;
+                _myTile.GetComponent<script_Tile>().occupied = true;
+                _myTile.GetComponent<script_Tile>().occupier = gameObject;
+                transform.position = _myTile.transform.position;
                 availableMovement--;
-                availableMovementField.text = availableMovement.ToString();
+                _availableMovementField.text = availableMovement.ToString();
                 //tile call method stepped on if not invisible
-                activatedTrap = myTile.GetComponent<script_Tile>().SteppedOn(gameObject);
+                activatedTrap = _myTile.GetComponent<script_Tile>().SteppedOn(gameObject);
                 if (activatedTrap)
                     break;
             }
@@ -361,17 +364,17 @@ namespace Mirror
 
         public void ToggleInventory()
         {
-            if (inventoryHUD.activeInHierarchy == false)
-                inventoryHUD.SetActive(true);
+            if (_inventoryHUD.activeInHierarchy == false)
+                _inventoryHUD.SetActive(true);
             else
-                inventoryHUD.SetActive(false);
+                _inventoryHUD.SetActive(false);
         }
 
         private void Die()
         {
             if (placed)
             {
-                myTile.GetComponent<script_Tile>().occupied = false;
+                _myTile.GetComponent<script_Tile>().occupied = false;
                 print("Player died!");
                 if (lives <= 0)
                 {

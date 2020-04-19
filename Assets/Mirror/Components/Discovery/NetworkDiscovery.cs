@@ -6,7 +6,9 @@ using UnityEngine.Events;
 namespace Mirror.Discovery
 {
     [Serializable]
-    public class ServerFoundUnityEvent : UnityEvent<ServerResponse> { };
+    public class ServerFoundUnityEvent : UnityEvent<ServerResponse>
+    {
+    };
 
     [DisallowMultipleComponent]
     [AddComponentMenu("Network/NetworkDiscovery")]
@@ -78,7 +80,10 @@ namespace Mirror.Discovery
         /// Override if you wish to include additional data in the discovery message
         /// such as desired game mode, language, difficulty, etc... </remarks>
         /// <returns>An instance of ServerRequest with data to be broadcasted</returns>
-        protected override ServerRequest GetRequest() => new ServerRequest();
+        protected override ServerRequest GetRequest()
+        {
+            return new ServerRequest();
+        }
 
         /// <summary>
         /// Process the answer from a server
@@ -98,7 +103,7 @@ namespace Mirror.Discovery
             // the provided host
             // However we know the real ip address of the server because we just
             // received a packet from it,  so use that as host.
-            UriBuilder realUri = new UriBuilder(response.uri)
+            var realUri = new UriBuilder(response.uri)
             {
                 Host = response.EndPoint.Address.ToString()
             };

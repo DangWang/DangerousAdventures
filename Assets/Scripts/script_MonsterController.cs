@@ -12,12 +12,12 @@ namespace Mirror
         public int attackDice;
         public bool attackedThisTurn;
         public bool canCarryItems;
-        private GameObject canvasDirections;
+        private GameObject _canvasDirections;
         public int defenseDice;
         public int goldDropped;
         public int goldRandomOffset;
-        private bool hasMoved;
-        private Slider healthBar;
+        private bool _hasMoved;
+        private Slider _healthBar;
         public int magicalResistance;
         public int monsterCost;
         public string monsterDescription;
@@ -26,7 +26,7 @@ namespace Mirror
         public int myHealth;
         public int myMaxMovement = 8;
         public int myRemainingMovement = 8;
-        private script_BoardController myScript_BoardController;
+        private script_BoardController _myScript_BoardController;
         public GameObject myTile;
         public int physicalResistance;
         public int pureResistance;
@@ -41,12 +41,12 @@ namespace Mirror
             var dice = new Enumerations.AttackDie[attackDice];
             if (attackedThisTurn == false)
             {
-                var set = new int[6] {0, 0, 1, 1, 2, 3};
+                var set = new int[6] { 0, 0, 1, 1, 2, 3 };
                 print("Monster Attacking");
                 for (var i = 0; i < attackDice; i++)
                 {
                     var j = set[Utilities.RollDice(1) - 1];
-                    dice[i] = (Enumerations.AttackDie) j;
+                    dice[i] = (Enumerations.AttackDie)j;
                     print("Attack die " + i + ":" + dice[i]);
                 }
 
@@ -63,12 +63,12 @@ namespace Mirror
 
             if (damageType == Enumerations.DamageType.Physical)
             {
-                var set = new int[6] {0, 0, 1, 1, 2, 3};
+                var set = new int[6] { 0, 0, 1, 1, 2, 3 };
                 defendDice = new Enumerations.DefenseDie[defenseDice];
                 for (var i = 0; i < defenseDice; i++)
                 {
                     var j = set[Utilities.RollDice(1) - 1];
-                    defendDice[i] = (Enumerations.DefenseDie) j;
+                    defendDice[i] = (Enumerations.DefenseDie)j;
                     print("Defense die " + i + ":" + defendDice[i]);
                 }
             }
@@ -76,7 +76,7 @@ namespace Mirror
             {
                 defendDice = new Enumerations.DefenseDie[magicalResistance];
                 for (var i = 0; i < magicalResistance; i++)
-                    defendDice[i] = (Enumerations.DefenseDie) Utilities.RollDice(1);
+                    defendDice[i] = (Enumerations.DefenseDie)Utilities.RollDice(1);
             }
             else
             {
@@ -186,7 +186,7 @@ namespace Mirror
         public void TakeDamage(int damage)
         {
             myHitpoints -= damage;
-            healthBar.value = myHitpoints;
+            _healthBar.value = myHitpoints;
             print(gameObject.name + myHitpoints);
             //hitpointsField.text = myHitpoints.ToString();
             if (myHitpoints <= 0) Die();
@@ -194,32 +194,32 @@ namespace Mirror
 
         private void Start()
         {
-            myScript_BoardController = GameObject.Find("Board").GetComponent<script_BoardController>();
-            canvasDirections = transform.Find("Canvas_Direction").gameObject;
-            healthBar = transform.Find("Canvas/Healthbar").GetComponent<Slider>();
-            canvasDirections.SetActive(false);
+            _myScript_BoardController = GameObject.Find("Board").GetComponent<script_BoardController>();
+            _canvasDirections = transform.Find("Canvas_Direction").gameObject;
+            _healthBar = transform.Find("Canvas/Healthbar").GetComponent<Slider>();
+            _canvasDirections.SetActive(false);
             myHitpoints = myHealth;
-            healthBar.value = myHitpoints;
-            healthBar.maxValue = myHitpoints;
-            healthBar.gameObject.SetActive(false);
+            _healthBar.value = myHitpoints;
+            _healthBar.maxValue = myHitpoints;
+            _healthBar.gameObject.SetActive(false);
         }
 
         public void SelectedUpdate()
         {
             if (myDirection == Enumerations.Direction.Choose)
-                myDirection = Enumerations.ChooseDirection(canvasDirections);
-            if (Input.GetKeyUp(KeyCode.R) && hasMoved == false) 
+                myDirection = Enumerations.ChooseDirection(_canvasDirections);
+            if (Input.GetKeyUp(KeyCode.R) && _hasMoved == false)
                 myDirection = Enumerations.Direction.Choose;
         }
 
         public void ToggleHealthbar()
         {
-            healthBar.gameObject.SetActive(!healthBar.gameObject.activeInHierarchy);
+            _healthBar.gameObject.SetActive(!_healthBar.gameObject.activeInHierarchy);
         }
 
         public void Unselected()
         {
-            canvasDirections.SetActive(false);
+            _canvasDirections.SetActive(false);
         }
 
         public int Move(GameObject toTile, List<GameObject> allowedMovement)
@@ -230,7 +230,7 @@ namespace Mirror
             bool activatedTrap;
             while (myTile != toTile)
             {
-//            print(index);
+                //            print(index);
                 tileTemp = allowedMovement.ElementAt(index++);
                 if (tileTemp.GetComponent<script_Tile>().occupied)
                 {
@@ -239,7 +239,7 @@ namespace Mirror
                 }
 
                 tilesMoved++;
-                hasMoved = true;
+                _hasMoved = true;
                 myTile.GetComponent<script_Tile>().occupied = false;
                 myTile.GetComponent<script_Tile>().occupier = null;
                 myTile = tileTemp;

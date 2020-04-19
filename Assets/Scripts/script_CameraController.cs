@@ -4,22 +4,22 @@ public class script_CameraController : MonoBehaviour
 {
     public float cameraSpeed;
 
-    private Vector3 newPosition;
+    private Vector3 _newPosition;
 
-    private float scroll;
+    private float _scroll;
     public float scrollSpeed;
 
     private void FixedUpdate()
     {
-        newPosition = transform.position;
-        scroll = Input.GetAxis("Mouse ScrollWheel");
+        _newPosition = transform.position;
+        _scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        if (Input.GetKey(KeyCode.W)) newPosition.y += cameraSpeed;
-        if (Input.GetKey(KeyCode.S)) newPosition.y -= cameraSpeed;
-        if (Input.GetKey(KeyCode.D)) newPosition.x += cameraSpeed;
-        if (Input.GetKey(KeyCode.A)) newPosition.x -= cameraSpeed;
-        newPosition.z += scroll * scrollSpeed;
+        if (Input.GetKey(KeyCode.W)) _newPosition.y += cameraSpeed;
+        if (Input.GetKey(KeyCode.S)) _newPosition.y -= cameraSpeed;
+        if (Input.GetKey(KeyCode.D)) _newPosition.x += cameraSpeed;
+        if (Input.GetKey(KeyCode.A)) _newPosition.x -= cameraSpeed;
+        _newPosition.z += _scroll * scrollSpeed;
 
-        transform.position = newPosition;
+        transform.position = _newPosition;
     }
 }

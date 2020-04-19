@@ -2,6 +2,7 @@
 // feature. keeping any global state between sessions will break
 // Mirror and most of our user's projects. don't allow it for now.
 // https://blogs.unity3d.com/2019/11/05/enter-play-mode-faster-in-unity-2019-3/
+
 using UnityEditor;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace Mirror
     {
 #if UNITY_2019_3_OR_NEWER
         [InitializeOnLoadMethod]
-        static void OnInitializeOnLoad()
+        private static void OnInitializeOnLoad()
         {
             // check immediately on load
             CheckPlayModeOptions();
@@ -21,7 +22,7 @@ namespace Mirror
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
 
-        static void OnPlayModeStateChanged(PlayModeStateChange state)
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
             // only check when entering play mode. no need to show it again
             // when exiting.
@@ -31,13 +32,14 @@ namespace Mirror
             }
         }
 
-        static void CheckPlayModeOptions()
+        private static void CheckPlayModeOptions()
         {
             // enabling the checkbox is enough. it controls all the other
             // settings.
             if (EditorSettings.enterPlayModeOptionsEnabled)
             {
-                Debug.LogError("Enter Play Mode Options are not supported by Mirror. Please disable 'ProjectSettings->Editor->Enter Play Mode Settings (Experimental)'.");
+                Debug.LogError(
+                    "Enter Play Mode Options are not supported by Mirror. Please disable 'ProjectSettings->Editor->Enter Play Mode Settings (Experimental)'.");
                 EditorApplication.isPlaying = false;
             }
         }

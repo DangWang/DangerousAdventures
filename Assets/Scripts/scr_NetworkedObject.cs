@@ -3,8 +3,7 @@ using Mirror;
 
 public class scr_NetworkedObject : NetworkBehaviour
 {
-    [SyncVar]
-    public string tempName = "";
+    [SyncVar] public string tempName = "";
 
     private void Update()
     {
@@ -12,7 +11,7 @@ public class scr_NetworkedObject : NetworkBehaviour
         {
             gameObject.name = tempName;
             print(gameObject.name);
-            this.enabled = false;
+            enabled = false;
         }
     }
 }

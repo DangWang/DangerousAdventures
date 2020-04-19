@@ -18,14 +18,17 @@ namespace Mirror
             /// The message being sent
             /// </summary>
             public readonly IMessageBase message;
+
             /// <summary>
             /// channel through which the message was sent
             /// </summary>
             public readonly int channel;
+
             /// <summary>
             /// how big was the message (does not include transport headers)
             /// </summary>
             public readonly int bytes;
+
             /// <summary>
             /// How many connections was the message sent to
             /// If an object has a lot of observers this count could be high
@@ -42,6 +45,7 @@ namespace Mirror
         }
 
         #region Out messages
+
         /// <summary>
         /// Event that gets raised when Mirror sends a message
         /// Subscribe to this if you want to diagnose the network
@@ -52,10 +56,11 @@ namespace Mirror
         {
             if (count > 0 && OutMessageEvent != null)
             {
-                MessageInfo outMessage = new MessageInfo(message, channel, bytes, count);
+                var outMessage = new MessageInfo(message, channel, bytes, count);
                 OutMessageEvent?.Invoke(outMessage);
             }
         }
+
         #endregion
 
         #region In messages
@@ -70,7 +75,7 @@ namespace Mirror
         {
             if (InMessageEvent != null)
             {
-                MessageInfo inMessage = new MessageInfo(message, channel, bytes, 1);
+                var inMessage = new MessageInfo(message, channel, bytes, 1);
                 InMessageEvent?.Invoke(inMessage);
             }
         }

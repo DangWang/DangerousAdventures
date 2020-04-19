@@ -28,8 +28,7 @@ namespace Mirror
         /// <summary>
         /// Current index of the player, e.g. Player1, Player2, etc.
         /// </summary>
-        [SyncVar]
-        public int index;
+        [SyncVar] public int index;
 
         #region Unity Callbacks
 
@@ -52,7 +51,10 @@ namespace Mirror
                 OnClientEnterRoom();
             }
             else
-                Debug.LogError("RoomPlayer could not find a NetworkRoomManager. The RoomPlayer requires a NetworkRoomManager object to function. Make sure that there is one in the scene.");
+            {
+                Debug.LogError(
+                    "RoomPlayer could not find a NetworkRoomManager. The RoomPlayer requires a NetworkRoomManager object to function. Make sure that there is one in the scene.");
+            }
         }
 
         #endregion
@@ -63,18 +65,15 @@ namespace Mirror
         public void CmdChangeReadyState(bool readyState)
         {
             readyToBegin = readyState;
-            NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
-            if (room != null)
-            {
-                room.ReadyStatusChanged();
-            }
+            var room = NetworkManager.singleton as NetworkRoomManager;
+            if (room != null) room.ReadyStatusChanged();
         }
 
         #endregion
 
         #region SyncVar Hooks
 
-        void ReadyStateChanged(bool oldReadyState, bool newReadyState)
+        private void ReadyStateChanged(bool oldReadyState, bool newReadyState)
         {
             OnClientReady(newReadyState);
         }
@@ -87,19 +86,25 @@ namespace Mirror
         /// This is a hook that is invoked on all player objects when entering the room.
         /// <para>Note: isLocalPlayer is not guaranteed to be set until OnStartLocalPlayer is called.</para>
         /// </summary>
-        public virtual void OnClientEnterRoom() { }
+        public virtual void OnClientEnterRoom()
+        {
+        }
 
         /// <summary>
         /// This is a hook that is invoked on all player objects when exiting the room.
         /// </summary>
-        public virtual void OnClientExitRoom() { }
+        public virtual void OnClientExitRoom()
+        {
+        }
 
         /// <summary>
         /// This is a hook that is invoked on clients when a RoomPlayer switches between ready or not ready.
         /// <para>This function is called when the a client player calls SendReadyToBeginMessage() or SendNotReadyToBeginMessage().</para>
         /// </summary>
         /// <param name="readyState">Whether the player is ready or not.</param>
-        public virtual void OnClientReady(bool readyState) { }
+        public virtual void OnClientReady(bool readyState)
+        {
+        }
 
         #endregion
 
@@ -113,7 +118,7 @@ namespace Mirror
             if (!showRoomGUI)
                 return;
 
-            NetworkRoomManager room = NetworkManager.singleton as NetworkRoomManager;
+            var room = NetworkManager.singleton as NetworkRoomManager;
             if (room)
             {
                 if (!room.showRoomGUI)
@@ -122,7 +127,7 @@ namespace Mirror
                 if (SceneManager.GetActiveScene().name != room.RoomScene)
                     return;
 
-                GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
+                GUILayout.BeginArea(new Rect(20f + index * 100, 200f, 90f, 130f));
 
                 GUILayout.Label($"Player [{index + 1}]");
 
@@ -131,13 +136,11 @@ namespace Mirror
                 else
                     GUILayout.Label("Not Ready");
 
-                if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("REMOVE"))
-                {
+                if ((isServer && index > 0 || isServerOnly) && GUILayout.Button("REMOVE"))
                     // This button only shows on the Host for all players other than the Host
                     // Host and Players can't remove themselves (stop the client instead)
                     // Host can kick a Player this way.
                     GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
-                }
 
                 GUILayout.EndArea();
 

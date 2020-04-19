@@ -1,4 +1,5 @@
 // all the [Command] code from NetworkBehaviourProcessor in one place
+
 using Mono.CecilX;
 using Mono.CecilX.Cil;
 
@@ -6,7 +7,7 @@ namespace Mirror.Weaver
 {
     public static class CommandProcessor
     {
-        const string CmdPrefix = "InvokeCmd";
+        private const string CmdPrefix = "InvokeCmd";
 
         /*
             // generates code like:
@@ -33,22 +34,20 @@ namespace Mirror.Weaver
         */
         public static MethodDefinition ProcessCommandCall(TypeDefinition td, MethodDefinition md, CustomAttribute ca)
         {
-            MethodDefinition cmd = new MethodDefinition("Call" + md.Name,
-                    MethodAttributes.Public | MethodAttributes.HideBySig,
-                    Weaver.voidType);
+            var cmd = new MethodDefinition("Call" + md.Name,
+                MethodAttributes.Public | MethodAttributes.HideBySig,
+                Weaver.voidType);
 
             // add parameters
-            foreach (ParameterDefinition pd in md.Parameters)
-            {
+            foreach (var pd in md.Parameters)
                 cmd.Parameters.Add(new ParameterDefinition(pd.Name, ParameterAttributes.None, pd.ParameterType));
-            }
 
             // move the old body to the new function
-            MethodBody newBody = cmd.Body;
+            var newBody = cmd.Body;
             cmd.Body = md.Body;
             md.Body = newBody;
 
-            ILProcessor cmdWorker = md.Body.GetILProcessor();
+            var cmdWorker = md.Body.GetILProcessor();
 
             NetworkBehaviourProcessor.WriteSetupLocals(cmdWorker);
 
@@ -65,12 +64,9 @@ namespace Mirror.Weaver
             if (!NetworkBehaviourProcessor.WriteArguments(cmdWorker, md, false))
                 return null;
 
-            string cmdName = md.Name;
-            int index = cmdName.IndexOf(CmdPrefix);
-            if (index > -1)
-            {
-                cmdName = cmdName.Substring(CmdPrefix.Length);
-            }
+            var cmdName = md.Name;
+            var index = cmdName.IndexOf(CmdPrefix);
+            if (index > -1) cmdName = cmdName.Substring(CmdPrefix.Length);
 
             // invoke internal send and return
             cmdWorker.Append(cmdWorker.Create(OpCodes.Ldarg_0)); // load 'base.' to call the SendCommand function with
@@ -99,14 +95,15 @@ namespace Mirror.Weaver
                 ((ShipControl)obj).CmdThrust(reader.ReadSingle(), (int)reader.ReadPackedUInt32());
             }
         */
-        public static MethodDefinition ProcessCommandInvoke(TypeDefinition td, MethodDefinition md, MethodDefinition cmdCallFunc)
+        public static MethodDefinition ProcessCommandInvoke(TypeDefinition td, MethodDefinition md,
+            MethodDefinition cmdCallFunc)
         {
-            MethodDefinition cmd = new MethodDefinition(CmdPrefix + md.Name,
+            var cmd = new MethodDefinition(CmdPrefix + md.Name,
                 MethodAttributes.Family | MethodAttributes.Static | MethodAttributes.HideBySig,
                 Weaver.voidType);
 
-            ILProcessor cmdWorker = cmd.Body.GetILProcessor();
-            Instruction label = cmdWorker.Create(OpCodes.Nop);
+            var cmdWorker = cmd.Body.GetILProcessor();
+            var label = cmdWorker.Create(OpCodes.Nop);
 
             NetworkBehaviourProcessor.WriteServerActiveCheck(cmdWorker, md.Name, label, "Command");
 

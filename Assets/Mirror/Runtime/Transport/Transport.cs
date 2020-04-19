@@ -1,5 +1,6 @@
 // abstract transport layer component
 // note: not all transports need a port, so add it to yours if needed.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,11 +10,30 @@ using UnityEngine.Events;
 namespace Mirror
 {
     // UnityEvent definitions
-    [Serializable] public class ClientDataReceivedEvent : UnityEvent<ArraySegment<byte>, int> { }
-    [Serializable] public class UnityEventException : UnityEvent<Exception> { }
-    [Serializable] public class UnityEventInt : UnityEvent<int> { }
-    [Serializable] public class ServerDataReceivedEvent : UnityEvent<int, ArraySegment<byte>, int> { }
-    [Serializable] public class UnityEventIntException : UnityEvent<int, Exception> { }
+    [Serializable]
+    public class ClientDataReceivedEvent : UnityEvent<ArraySegment<byte>, int>
+    {
+    }
+
+    [Serializable]
+    public class UnityEventException : UnityEvent<Exception>
+    {
+    }
+
+    [Serializable]
+    public class UnityEventInt : UnityEvent<int>
+    {
+    }
+
+    [Serializable]
+    public class ServerDataReceivedEvent : UnityEvent<int, ArraySegment<byte>, int>
+    {
+    }
+
+    [Serializable]
+    public class UnityEventIntException : UnityEvent<int, Exception>
+    {
+    }
 
     public abstract class Transport : MonoBehaviour
     {
@@ -32,6 +52,7 @@ namespace Mirror
         public abstract bool Available();
 
         #region Client
+
         /// <summary>
         /// Notify subscribers when when this client establish a successful connection to the server
         /// </summary>
@@ -93,7 +114,6 @@ namespace Mirror
         #endregion
 
         #region Server
-
 
         /// <summary>
         /// Retrieves the address of this server.
@@ -157,7 +177,8 @@ namespace Mirror
         /// <summary>
         /// Deprecated: Use ServerGetClientAddress(int connectionId) instead
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use ServerGetClientAddress(int connectionId) instead")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete("Use ServerGetClientAddress(int connectionId) instead")]
         public virtual bool GetConnectionInfo(int connectionId, out string address)
         {
             address = ServerGetClientAddress(connectionId);
@@ -211,7 +232,9 @@ namespace Mirror
         //            e.g. in uSurvival Transport would apply Cmds before
         //            ShoulderRotation.LateUpdate, resulting in projectile
         //            spawns at the point before shoulder rotation.
-        public void Update() { }
+        public void Update()
+        {
+        }
 
         /// <summary>
         /// called when quitting the application by closing the window / pressing stop in the editor

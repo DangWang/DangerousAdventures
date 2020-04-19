@@ -1,4 +1,5 @@
 // all the [TargetRpc] code from NetworkBehaviourProcessor in one place
+
 using Mono.CecilX;
 using Mono.CecilX.Cil;
 
@@ -6,7 +7,7 @@ namespace Mirror.Weaver
 {
     public static class TargetRpcProcessor
     {
-        const string TargetRpcPrefix = "InvokeTargetRpc";
+        private const string TargetRpcPrefix = "InvokeTargetRpc";
 
         // helper functions to check if the method has a NetworkConnection parameter
         public static bool HasNetworkConnectionParameter(MethodDefinition md)
@@ -15,15 +16,16 @@ namespace Mirror.Weaver
                    md.Parameters[0].ParameterType.FullName == Weaver.NetworkConnectionType.FullName;
         }
 
-        public static MethodDefinition ProcessTargetRpcInvoke(TypeDefinition td, MethodDefinition md, MethodDefinition rpcCallFunc)
+        public static MethodDefinition ProcessTargetRpcInvoke(TypeDefinition td, MethodDefinition md,
+            MethodDefinition rpcCallFunc)
         {
-            MethodDefinition rpc = new MethodDefinition(RpcProcessor.RpcPrefix + md.Name, MethodAttributes.Family |
-                    MethodAttributes.Static |
-                    MethodAttributes.HideBySig,
-                    Weaver.voidType);
+            var rpc = new MethodDefinition(RpcProcessor.RpcPrefix + md.Name, MethodAttributes.Family |
+                                                                             MethodAttributes.Static |
+                                                                             MethodAttributes.HideBySig,
+                Weaver.voidType);
 
-            ILProcessor rpcWorker = rpc.Body.GetILProcessor();
-            Instruction label = rpcWorker.Create(OpCodes.Nop);
+            var rpcWorker = rpc.Body.GetILProcessor();
+            var label = rpcWorker.Create(OpCodes.Nop);
 
             NetworkBehaviourProcessor.WriteClientActiveCheck(rpcWorker, md.Name, label, "TargetRPC");
 
@@ -32,12 +34,10 @@ namespace Mirror.Weaver
             rpcWorker.Append(rpcWorker.Create(OpCodes.Castclass, td));
 
             // NetworkConnection parameter is optional
-            bool hasNetworkConnection = HasNetworkConnectionParameter(md);
+            var hasNetworkConnection = HasNetworkConnectionParameter(md);
             if (hasNetworkConnection)
-            {
                 //ClientScene.readyconnection
                 rpcWorker.Append(rpcWorker.Create(OpCodes.Call, Weaver.ReadyConnectionReference));
-            }
 
             // process reader parameters and skip first one if first one is NetworkConnection
             if (!NetworkBehaviourProcessor.ProcessNetworkReaderParameters(md, rpcWorker, hasNetworkConnection))
@@ -87,52 +87,43 @@ namespace Mirror.Weaver
         */
         public static MethodDefinition ProcessTargetRpcCall(TypeDefinition td, MethodDefinition md, CustomAttribute ca)
         {
-            MethodDefinition rpc = new MethodDefinition("Call" + md.Name, MethodAttributes.Public |
-                    MethodAttributes.HideBySig,
-                    Weaver.voidType);
+            var rpc = new MethodDefinition("Call" + md.Name, MethodAttributes.Public |
+                                                             MethodAttributes.HideBySig,
+                Weaver.voidType);
 
             // add parameters
-            foreach (ParameterDefinition pd in md.Parameters)
-            {
+            foreach (var pd in md.Parameters)
                 rpc.Parameters.Add(new ParameterDefinition(pd.Name, ParameterAttributes.None, pd.ParameterType));
-            }
 
             // move the old body to the new function
-            MethodBody newBody = rpc.Body;
+            var newBody = rpc.Body;
             rpc.Body = md.Body;
             md.Body = newBody;
 
-            ILProcessor rpcWorker = md.Body.GetILProcessor();
+            var rpcWorker = md.Body.GetILProcessor();
 
             NetworkBehaviourProcessor.WriteSetupLocals(rpcWorker);
 
             NetworkBehaviourProcessor.WriteCreateWriter(rpcWorker);
 
             // NetworkConnection parameter is optional
-            bool hasNetworkConnection = HasNetworkConnectionParameter(md);
+            var hasNetworkConnection = HasNetworkConnectionParameter(md);
 
             // write all the arguments that the user passed to the TargetRpc call
             // (skip first one if first one is NetworkConnection)
             if (!NetworkBehaviourProcessor.WriteArguments(rpcWorker, md, hasNetworkConnection))
                 return null;
 
-            string rpcName = md.Name;
-            int index = rpcName.IndexOf(TargetRpcPrefix);
-            if (index > -1)
-            {
-                rpcName = rpcName.Substring(TargetRpcPrefix.Length);
-            }
+            var rpcName = md.Name;
+            var index = rpcName.IndexOf(TargetRpcPrefix);
+            if (index > -1) rpcName = rpcName.Substring(TargetRpcPrefix.Length);
 
             // invoke SendInternal and return
             rpcWorker.Append(rpcWorker.Create(OpCodes.Ldarg_0)); // this
             if (HasNetworkConnectionParameter(md))
-            {
                 rpcWorker.Append(rpcWorker.Create(OpCodes.Ldarg_1)); // connection
-            }
             else
-            {
                 rpcWorker.Append(rpcWorker.Create(OpCodes.Ldnull)); // null
-            }
             rpcWorker.Append(rpcWorker.Create(OpCodes.Ldtoken, td));
             rpcWorker.Append(rpcWorker.Create(OpCodes.Call, Weaver.getTypeFromHandleReference)); // invokerClass
             rpcWorker.Append(rpcWorker.Create(OpCodes.Ldstr, rpcName));
@@ -161,10 +152,7 @@ namespace Mirror.Weaver
                 return false;
             }
 
-            if (!NetworkBehaviourProcessor.ProcessMethodsValidateFunction(md))
-            {
-                return false;
-            }
+            if (!NetworkBehaviourProcessor.ProcessMethodsValidateFunction(md)) return false;
 
             // validate
             return NetworkBehaviourProcessor.ProcessMethodsValidateParameters(md, ca);

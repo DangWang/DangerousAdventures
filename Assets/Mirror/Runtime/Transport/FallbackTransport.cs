@@ -1,6 +1,7 @@
 // uses the first available transport for server and client.
 // example: to use Apathy if on Windows/Mac/Linux and fall back to Telepathy
 //          otherwise.
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,14 +14,12 @@ namespace Mirror
         public Transport[] transports;
 
         // the first transport that is available on this platform
-        Transport available;
+        private Transport available;
 
         public void Awake()
         {
             if (transports == null || transports.Length == 0)
-            {
                 throw new Exception("FallbackTransport requires at least 1 underlying transport");
-            }
             InitClient();
             InitServer();
             available = GetAvailableTransport();
@@ -28,15 +27,11 @@ namespace Mirror
         }
 
         // The client just uses the first transport available
-        Transport GetAvailableTransport()
+        private Transport GetAvailableTransport()
         {
-            foreach (Transport transport in transports)
-            {
+            foreach (var transport in transports)
                 if (transport.Available())
-                {
                     return transport;
-                }
-            }
             throw new Exception("No transport suitable for this platform");
         }
 
@@ -46,10 +41,10 @@ namespace Mirror
         }
 
         // clients always pick the first transport
-        void InitClient()
+        private void InitClient()
         {
             // wire all the base transports to our events
-            foreach (Transport transport in transports)
+            foreach (var transport in transports)
             {
                 transport.OnClientConnected.AddListener(OnClientConnected.Invoke);
                 transport.OnClientDataReceived.AddListener(OnClientDataReceived.Invoke);
@@ -65,10 +60,8 @@ namespace Mirror
 
         public override void ClientConnect(Uri uri)
         {
-            foreach (Transport transport in transports)
-            {
+            foreach (var transport in transports)
                 if (transport.Available())
-                {
                     try
                     {
                         transport.ClientConnect(uri);
@@ -78,8 +71,7 @@ namespace Mirror
                     {
                         // transport does not support the schema, just move on to the next one
                     }
-                }
-            }
+
             throw new Exception("No transport suitable for this platform");
         }
 
@@ -98,10 +90,10 @@ namespace Mirror
             return available.ClientSend(channelId, segment);
         }
 
-        void InitServer()
+        private void InitServer()
         {
             // wire all the base transports to our events
-            foreach (Transport transport in transports)
+            foreach (var transport in transports)
             {
                 transport.OnServerConnected.AddListener(OnServerConnected.Invoke);
                 transport.OnServerDataReceived.AddListener(OnServerDataReceived.Invoke);
@@ -112,7 +104,10 @@ namespace Mirror
 
         // right now this just returns the first available uri,
         // should we return the list of all available uri?
-        public override Uri ServerUri() => available.ServerUri();
+        public override Uri ServerUri()
+        {
+            return available.ServerUri();
+        }
 
         public override bool ServerActive()
         {
@@ -162,12 +157,13 @@ namespace Mirror
             //   different platforms seeing a different game state.
             // => the safest solution is to use the smallest max size for all
             //    transports. that will never fail.
-            int mininumAllowedSize = int.MaxValue;
-            foreach (Transport transport in transports)
+            var mininumAllowedSize = int.MaxValue;
+            foreach (var transport in transports)
             {
-                int size = transport.GetMaxPacketSize(channelId);
+                var size = transport.GetMaxPacketSize(channelId);
                 mininumAllowedSize = Mathf.Min(size, mininumAllowedSize);
             }
+
             return mininumAllowedSize;
         }
 
@@ -175,6 +171,5 @@ namespace Mirror
         {
             return available.ToString();
         }
-
     }
 }

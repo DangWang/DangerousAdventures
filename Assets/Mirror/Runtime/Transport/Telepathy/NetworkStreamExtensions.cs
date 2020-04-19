@@ -3,7 +3,6 @@ using System.Net.Sockets;
 
 namespace Telepathy
 {
-
     public static class NetworkStreamExtensions
     {
         // .Read returns '0' if remote closed the connection but throws an
@@ -39,12 +38,12 @@ namespace Telepathy
             //         if (stream.Read(buffer, i, 1) == 0)
             //             return false;
             //     return true;
-            int bytesRead = 0;
+            var bytesRead = 0;
             while (bytesRead < amount)
             {
                 // read up to 'remaining' bytes with the 'safe' read extension
-                int remaining = amount - bytesRead;
-                int result = stream.ReadSafely(buffer, bytesRead, remaining);
+                var remaining = amount - bytesRead;
+                var result = stream.ReadSafely(buffer, bytesRead, remaining);
 
                 // .Read returns 0 if disconnected
                 if (result == 0)
@@ -53,6 +52,7 @@ namespace Telepathy
                 // otherwise add to bytes read
                 bytesRead += result;
             }
+
             return true;
         }
     }

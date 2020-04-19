@@ -5,8 +5,8 @@ namespace Mirror
     // https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average
     public class ExponentialMovingAverage
     {
-        readonly float alpha;
-        bool initialized;
+        private readonly float alpha;
+        private bool initialized;
 
         public ExponentialMovingAverage(int n)
         {
@@ -20,7 +20,7 @@ namespace Mirror
             // https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
             if (initialized)
             {
-                double delta = newValue - Value;
+                var delta = newValue - Value;
                 Value += alpha * delta;
                 Var = (1 - alpha) * (Var + alpha * delta * delta);
             }

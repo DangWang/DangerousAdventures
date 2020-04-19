@@ -8,8 +8,8 @@ namespace Telepathy
     public class Client : Common
     {
         public TcpClient client;
-        Thread receiveThread;
-        Thread sendThread;
+        private Thread receiveThread;
+        private Thread sendThread;
 
         // TcpClient.Connected doesn't check if socket != null, which
         // results in NullReferenceExceptions if connection was closed.
@@ -30,21 +30,21 @@ namespace Telepathy
         // => bools are atomic according to
         //    https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/variables
         //    made volatile so the compiler does not reorder access to it
-        volatile bool _Connecting;
+        private volatile bool _Connecting;
         public bool Connecting => _Connecting;
 
         // send queue
         // => SafeQueue is twice as fast as ConcurrentQueue, see SafeQueue.cs!
-        SafeQueue<byte[]> sendQueue = new SafeQueue<byte[]>();
+        private SafeQueue<byte[]> sendQueue = new SafeQueue<byte[]>();
 
         // ManualResetEvent to wake up the send thread. better than Thread.Sleep
         // -> call Set() if everything was sent
         // -> call Reset() if there is something to send again
         // -> call WaitOne() to block until Reset was called
-        ManualResetEvent sendPending = new ManualResetEvent(false);
+        private ManualResetEvent sendPending = new ManualResetEvent(false);
 
         // the thread function
-        void ReceiveThreadFunction(string ip, int port)
+        private void ReceiveThreadFunction(string ip, int port)
         {
             // absolutely must wrap with try/catch, otherwise thread
             // exceptions are silent
@@ -196,9 +196,11 @@ namespace Telepathy
                     sendPending.Set(); // interrupt SendThread WaitOne()
                     return true;
                 }
+
                 Logger.LogError("Client.Send: message too big: " + data.Length + ". Limit: " + MaxMessageSize);
                 return false;
             }
+
             Logger.LogWarning("Client.Send: not connected!");
             return false;
         }

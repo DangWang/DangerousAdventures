@@ -6,7 +6,7 @@ namespace Mirror
 {
     // a server's connection TO a LocalClient.
     // sending messages on this connection causes the client's handler function to be invoked directly
-    class ULocalConnectionToClient : NetworkConnectionToClient
+    internal class ULocalConnectionToClient : NetworkConnectionToClient
     {
         internal ULocalConnectionToServer connectionToServer;
 
@@ -20,7 +20,7 @@ namespace Mirror
         {
             // LocalConnection doesn't support allocation-free sends yet.
             // previously we allocated in Mirror. now we do it here.
-            byte[] data = new byte[segment.Count];
+            var data = new byte[segment.Count];
             Array.Copy(segment.Array, segment.Offset, data, 0, segment.Count);
             connectionToServer.packetQueue.Enqueue(data);
             return true;
@@ -75,7 +75,7 @@ namespace Mirror
             // process internal messages so they are applied at the correct time
             while (packetQueue.Count > 0)
             {
-                byte[] packet = packetQueue.Dequeue();
+                var packet = packetQueue.Dequeue();
                 // Treat host player messages exactly like connected client
                 // to avoid deceptive / misleading behavior differences
                 TransportReceive(new ArraySegment<byte>(packet), Channels.DefaultReliable);

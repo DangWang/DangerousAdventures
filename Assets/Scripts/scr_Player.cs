@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class scr_Player : NetworkBehaviour
 {
-    private GameObject activeMenu, monsterMenu, trapMenu, inventoryHUD, artifactMenu;
-    private int uid = 0; //unique id for each and every object that I spawn
+    private GameObject _activeMenu, _monsterMenu, _trapMenu, _inventoryHUD, _artifactMenu;
+    private int _uid = 0; //unique id for each and every object that I spawn
     public int artifactCap = 3;
     public int artifactCount;
 
     public GameObject[] artifactTypes;
-    
+
     public int monsterCap;
     public List<CreationPoint> monsterPoints = new List<CreationPoint>();
     public List<GameObject> monsters = new List<GameObject>();
     public GameObject[] monsterTypes;
 
-    private GameObject myCanvas;
+    private GameObject _myCanvas;
     public int numberOfMonsters;
     public GameObject selected;
     public GameObject selectedArtifactType;
@@ -36,21 +36,19 @@ public class scr_Player : NetworkBehaviour
 
     public bool beginMyTurn;
 
-    [SyncVar]
-    public bool isMyTurn;
+    [SyncVar] public bool isMyTurn;
 
-    [SyncVar]
-    public int connID;
+    [SyncVar] public int connID;
 
 
     private void Start()
     {
-        myCanvas = transform.Find("Canvas_World").gameObject;
-        monsterMenu = transform.Find("Canvas_World/MonsterMenu").gameObject;
-        activeMenu = transform.Find("Canvas_World/ActiveMenu").gameObject;
-        trapMenu = transform.Find("Canvas_World/TrapMenu").gameObject;
-        artifactMenu = transform.Find("Canvas_World/ArtifactMenu").gameObject;
-        myCanvas.SetActive(false);
+        _myCanvas = transform.Find("Canvas_World").gameObject;
+        _monsterMenu = transform.Find("Canvas_World/MonsterMenu").gameObject;
+        _activeMenu = transform.Find("Canvas_World/ActiveMenu").gameObject;
+        _trapMenu = transform.Find("Canvas_World/TrapMenu").gameObject;
+        _artifactMenu = transform.Find("Canvas_World/ArtifactMenu").gameObject;
+        _myCanvas.SetActive(false);
         AddMonsterPoints(10, 0);
     }
 
@@ -60,16 +58,14 @@ public class scr_Player : NetworkBehaviour
         if (isLocalPlayer)
         {
             if (Input.GetKeyUp(KeyCode.Tab))
-                foreach (GameObject monster in GameObject.FindObjectsOfType(typeof(GameObject)))
-                {
-                    if(monster.tag == "Monster")
+                foreach (GameObject monster in FindObjectsOfType(typeof(GameObject)))
+                    if (monster.tag == "Monster")
                         monster.GetComponent<scr_CombatController>().ToggleHealthbar();
-                }
 
             if (beginMyTurn)
             {
                 print("Player: " + name + " is beginning his turn.");
-                myCanvas.SetActive(true);
+                _myCanvas.SetActive(true);
                 sharedRemainingMovement = Utilities.RollDice(sharedMovementDice);
                 foreach (var monster in monsters)
                 {
@@ -109,7 +105,7 @@ public class scr_Player : NetworkBehaviour
                 }
 
                 //Place/Spawn monsters
-                if (Input.GetKeyUp(KeyCode.O)) 
+                if (Input.GetKeyUp(KeyCode.O))
                     ToggleMonsterMenu();
                 if (Input.GetKeyUp(KeyCode.Space) && selectedMonsterType != null)
                     if (selected.tag == selectedMonsterType.GetComponent<scr_Monster>().spawnTag
@@ -122,7 +118,7 @@ public class scr_Player : NetworkBehaviour
                         }
 
                 //Place Traps TODO change it to the same system as monsters
-                if (Input.GetKeyUp(KeyCode.T)) 
+                if (Input.GetKeyUp(KeyCode.T))
                     ToggleTrapMenu();
                 if (Input.GetMouseButtonUp(1) && selectedTrapType != null)
                 {
@@ -152,7 +148,7 @@ public class scr_Player : NetworkBehaviour
                 }
 
                 //Place artifacts
-                if (Input.GetKeyUp(KeyCode.U)) 
+                if (Input.GetKeyUp(KeyCode.U))
                     ToggleArtifactMenu();
                 if (Input.GetMouseButtonUp(1) && selectedArtifactType != null)
                 {
@@ -193,16 +189,16 @@ public class scr_Player : NetworkBehaviour
             monster.GetComponent<scr_AffectedBy>().CmdOnEndTurn();
         }
 
-        if (selected != null && selected.tag == "Monster") 
+        if (selected != null && selected.tag == "Monster")
             selected.GetComponent<scr_Monster>().Unselected();
-        myCanvas.SetActive(false);
+        _myCanvas.SetActive(false);
         print("I SAID NEXT!");
         CmdEndTurn();
     }
 
 
     [Command]
-    void CmdEndTurn()
+    private void CmdEndTurn()
     {
         GameObject.Find("GM").GetComponent<script_GameManager>().RpcNextTurn(name);
     }
@@ -217,7 +213,7 @@ public class scr_Player : NetworkBehaviour
     [ClientRpc]
     public void RpcMonsterDied(string monsterS)
     {
-        GameObject monster = GameObject.Find(monsterS);
+        var monster = GameObject.Find(monsterS);
         monster.GetComponent<scr_Monster>().Die();
         monsters.Remove(monster);
     }
@@ -225,27 +221,27 @@ public class scr_Player : NetworkBehaviour
 
     public void ToggleMonsterMenu()
     {
-        if (monsterMenu.activeInHierarchy == false)
-            monsterMenu.SetActive(true);
+        if (_monsterMenu.activeInHierarchy == false)
+            _monsterMenu.SetActive(true);
         else
-            monsterMenu.SetActive(false);
+            _monsterMenu.SetActive(false);
     }
 
 
     public void ToggleActiveMenu()
     {
-        if (activeMenu.activeInHierarchy == false)
-            activeMenu.SetActive(true);
+        if (_activeMenu.activeInHierarchy == false)
+            _activeMenu.SetActive(true);
         else
-            activeMenu.SetActive(false);
+            _activeMenu.SetActive(false);
     }
 
 
     public void ToggleInventory()
     {
-        if (inventoryHUD.activeInHierarchy == false)
+        if (_inventoryHUD.activeInHierarchy == false)
         {
-            inventoryHUD.SetActive(true);
+            _inventoryHUD.SetActive(true);
             if (selected.tag == "Monster" && selected.GetComponent<scr_Monster>().hasInventory)
             {
                 //change the inventory elements logic
@@ -253,26 +249,26 @@ public class scr_Player : NetworkBehaviour
         }
         else
         {
-            inventoryHUD.SetActive(false);
+            _inventoryHUD.SetActive(false);
         }
     }
 
 
     public void ToggleTrapMenu()
     {
-        if (trapMenu.activeInHierarchy == false)
-            trapMenu.SetActive(true);
+        if (_trapMenu.activeInHierarchy == false)
+            _trapMenu.SetActive(true);
         else
-            trapMenu.SetActive(false);
+            _trapMenu.SetActive(false);
     }
 
 
     public void ToggleArtifactMenu()
     {
-        if (artifactMenu.activeInHierarchy == false)
-            artifactMenu.SetActive(true);
+        if (_artifactMenu.activeInHierarchy == false)
+            _artifactMenu.SetActive(true);
         else
-            artifactMenu.SetActive(false);
+            _artifactMenu.SetActive(false);
     }
 
 
@@ -303,8 +299,8 @@ public class scr_Player : NetworkBehaviour
     private void PlaceMonster(GameObject monster, GameObject tile)
     {
         print("Caaaaleeeeeeeleleleleeld");
-        CmdSpawnMonster(monster.name, name + uid, tile.name, name);
-        uid++;
+        CmdSpawnMonster(monster.name, name + _uid, tile.name, name);
+        _uid++;
     }
 
     [Command]
@@ -317,7 +313,7 @@ public class scr_Player : NetworkBehaviour
         foreach (var g in NetworkManager.singleton.spawnPrefabs)
             if (g.name == monsterName)
                 prefab = g;
-        if(prefab == null)
+        if (prefab == null)
             Debug.LogError("Error. Prefab not found!");
         var newMonster = Instantiate(prefab);
         newMonster.name = monsterName + name;
@@ -325,7 +321,7 @@ public class scr_Player : NetworkBehaviour
         newMonster.GetComponent<scr_Movement>().myTile = tile;
         tileScript.occupied = true;
         tileScript.occupier = newMonster;
-        newMonster.GetComponent<scr_NetworkedObject>().tempName = (newMonster.name);
+        newMonster.GetComponent<scr_NetworkedObject>().tempName = newMonster.name;
         NetworkServer.Spawn(newMonster, GameObject.Find("NetworkManager")
             .GetComponent<scr_NetworkManager>().pInfo[connID].connection);
         RpcAddMonsterToList(newMonster.name, playerName);
@@ -337,15 +333,10 @@ public class scr_Player : NetworkBehaviour
         var player = GameObject.Find(playerName);
         var monster = GameObject.Find(monsterName);
         if (monster == null)
-        {
             foreach (var g in GameObject.FindGameObjectsWithTag("Monster"))
-            {
                 if (g.GetComponent<scr_NetworkedObject>().tempName == monsterName)
-                {
                     monster = g;
-                }
-            }
-        }
+
         player.GetComponent<scr_Player>().monsters.Add(monster);
         player.GetComponent<scr_Player>().monsters[numberOfMonsters].GetComponent<scr_Movement>().myTile = selected;
         player.GetComponent<scr_Player>().monsters[numberOfMonsters].GetComponent<scr_Movement>().parentScript = this;
@@ -359,8 +350,8 @@ public class scr_Player : NetworkBehaviour
 
     private void PlaceTrap(GameObject trap, GameObject tile)
     {
-        CmdSpawnTrap(trap.name, name + uid, tile.name, name);
-        uid++;
+        CmdSpawnTrap(trap.name, name + _uid, tile.name, name);
+        _uid++;
     }
 
     [Command]
@@ -376,7 +367,7 @@ public class scr_Player : NetworkBehaviour
         var newTrap = Instantiate(prefab);
         newTrap.name = trapName + name;
         newTrap.transform.position = tile.transform.position;
-        newTrap.GetComponent<scr_NetworkedObject>().tempName = (newTrap.name);
+        newTrap.GetComponent<scr_NetworkedObject>().tempName = newTrap.name;
         NetworkServer.Spawn(newTrap);
         tile.GetComponent<script_Tile>().myTrap = newTrap;
 
@@ -385,12 +376,12 @@ public class scr_Player : NetworkBehaviour
         //     .GetComponent<scr_NetworkManager>().pInfo[connID].connection);
         RpcAddTrapToList(newTrap.name, playerName);
     }
-    
+
     private void CmdDestroyTrap(string tileName)
     {
         var tile = GameObject.Find(tileName);
         var tileScript = tile.GetComponent<script_Tile>();
-        
+
         Destroy(tileScript.myTrap);
         tileScript.myTrap = null;
     }
@@ -420,7 +411,7 @@ public class scr_Player : NetworkBehaviour
                 prefab = g;
         var newArtifact = Instantiate(prefab);
         newArtifact.name = artifactName + name;
-        newArtifact.GetComponent<scr_NetworkedObject>().tempName = (newArtifact.name);
+        newArtifact.GetComponent<scr_NetworkedObject>().tempName = newArtifact.name;
         NetworkServer.Spawn(newArtifact);
     }
 
@@ -451,13 +442,13 @@ public class scr_Player : NetworkBehaviour
 //This class represents the monster and trap points for the DM.
 public class CreationPoint
 {
-    private int cdRemaining;
+    private int _cdRemaining;
     public bool isActive;
 
     public CreationPoint(int cooldown)
     {
-        cdRemaining = cooldown;
-        if (cdRemaining == 0)
+        _cdRemaining = cooldown;
+        if (_cdRemaining == 0)
             isActive = true;
         else
             isActive = false;
@@ -465,8 +456,8 @@ public class CreationPoint
 
     public void UpdateCD()
     {
-        if (cdRemaining > 0) cdRemaining--;
-        if (cdRemaining == 0)
+        if (_cdRemaining > 0) _cdRemaining--;
+        if (_cdRemaining == 0)
             isActive = true;
         else
             isActive = false;

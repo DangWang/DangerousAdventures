@@ -1,4 +1,5 @@
 ﻿// common code used by server and client
+
 using System;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
@@ -53,11 +54,11 @@ namespace Telepathy
         public int SendTimeout = 5000;
 
         // avoid header[4] allocations but don't use one buffer for all threads
-        [ThreadStatic] static byte[] header;
+        [ThreadStatic] private static byte[] header;
 
         // avoid payload[packetSize] allocations but don't use one buffer for
         // all threads
-        [ThreadStatic] static byte[] payload;
+        [ThreadStatic] private static byte[] payload;
 
         // static helper functions /////////////////////////////////////////////
         // send message (via stream) with the <size,content> message structure
@@ -71,8 +72,8 @@ namespace Telepathy
             {
                 // we might have multiple pending messages. merge into one
                 // packet to avoid TCP overheads and improve performance.
-                int packetSize = 0;
-                for (int i = 0; i < messages.Length; ++i)
+                var packetSize = 0;
+                for (var i = 0; i < messages.Length; ++i)
                     packetSize += sizeof(int) + messages[i].Length; // header + content
 
                 // create payload buffer if not created yet or previous one is
@@ -82,8 +83,8 @@ namespace Telepathy
                     payload = new byte[packetSize];
 
                 // create the packet
-                int position = 0;
-                for (int i = 0; i < messages.Length; ++i)
+                var position = 0;
+                for (var i = 0; i < messages.Length; ++i)
                 {
                     // create header buffer if not created yet
                     if (header == null)
@@ -125,7 +126,7 @@ namespace Telepathy
                 return false;
 
             // convert to int
-            int size = Utils.BytesToIntBigEndian(header);
+            var size = Utils.BytesToIntBigEndian(header);
 
             // protect against allocation attacks. an attacker might send
             // multiple fake '2GB header' packets in a row, causing the server
@@ -136,19 +137,21 @@ namespace Telepathy
                 content = new byte[size];
                 return stream.ReadExactly(content, size);
             }
+
             Logger.LogWarning("ReadMessageBlocking: possible allocation attack with a header of: " + size + " bytes.");
             return false;
         }
 
         // thread receive function is the same for client and server's clients
         // (static to reduce state for maximum reliability)
-        protected static void ReceiveLoop(int connectionId, TcpClient client, ConcurrentQueue<Message> receiveQueue, int MaxMessageSize)
+        protected static void ReceiveLoop(int connectionId, TcpClient client, ConcurrentQueue<Message> receiveQueue,
+            int MaxMessageSize)
         {
             // get NetworkStream from client
-            NetworkStream stream = client.GetStream();
+            var stream = client.GetStream();
 
             // keep track of last message queue warning
-            DateTime messageQueueLastWarning = DateTime.Now;
+            var messageQueueLastWarning = DateTime.Now;
 
             // absolutely must wrap with try/catch, otherwise thread exceptions
             // are silent
@@ -192,10 +195,11 @@ namespace Telepathy
                     //    use most it's processing power to hopefully process it.
                     if (receiveQueue.Count > messageQueueSizeWarning)
                     {
-                        TimeSpan elapsed = DateTime.Now - messageQueueLastWarning;
+                        var elapsed = DateTime.Now - messageQueueLastWarning;
                         if (elapsed.TotalSeconds > 10)
                         {
-                            Logger.LogWarning("ReceiveLoop: messageQueue is getting big(" + receiveQueue.Count + "), try calling GetNextMessage more often. You can call it more than once per frame!");
+                            Logger.LogWarning("ReceiveLoop: messageQueue is getting big(" + receiveQueue.Count +
+                                              "), try calling GetNextMessage more often. You can call it more than once per frame!");
                             messageQueueLastWarning = DateTime.Now;
                         }
                     }
@@ -206,7 +210,8 @@ namespace Telepathy
                 // something went wrong. the thread was interrupted or the
                 // connection closed or we closed our own connection or ...
                 // -> either way we should stop gracefully
-                Logger.Log("ReceiveLoop: finished receive function for connectionId=" + connectionId + " reason: " + exception);
+                Logger.Log("ReceiveLoop: finished receive function for connectionId=" + connectionId + " reason: " +
+                           exception);
             }
             finally
             {
@@ -226,10 +231,11 @@ namespace Telepathy
         // thread send function
         // note: we really do need one per connection, so that if one connection
         //       blocks, the rest will still continue to get sends
-        protected static void SendLoop(int connectionId, TcpClient client, SafeQueue<byte[]> sendQueue, ManualResetEvent sendPending)
+        protected static void SendLoop(int connectionId, TcpClient client, SafeQueue<byte[]> sendQueue,
+            ManualResetEvent sendPending)
         {
             // get NetworkStream from client
-            NetworkStream stream = client.GetStream();
+            var stream = client.GetStream();
 
             try
             {
@@ -248,11 +254,9 @@ namespace Telepathy
                     // ConcurrentQueue, see SafeQueue.cs!
                     byte[][] messages;
                     if (sendQueue.TryDequeueAll(out messages))
-                    {
                         // send message (blocking) or stop if stream is closed
                         if (!SendMessagesBlocking(stream, messages))
                             break; // break instead of return so stream close still happens!
-                    }
 
                     // don't choke up the CPU: wait until queue not empty anymore
                     sendPending.WaitOne();

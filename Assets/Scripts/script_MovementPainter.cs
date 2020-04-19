@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class script_MovementPainter : MonoBehaviour
 {
-    private static readonly GameObject marker = Resources.Load("marker") as GameObject;
+    private static readonly GameObject s_marker = Resources.Load("marker") as GameObject;
 
     public static void AddAllowedMovementMarker(List<GameObject> allowedMovement)
     {
         foreach (var g in allowedMovement)
         {
-            var mark = Instantiate(marker, g.transform.position, Quaternion.identity);
+            var mark = Instantiate(s_marker, g.transform.position, Quaternion.identity);
             mark.name = "Movement_Marker";
             mark.transform.parent = g.transform;
         }

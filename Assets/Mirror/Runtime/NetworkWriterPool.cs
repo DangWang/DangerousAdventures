@@ -2,16 +2,15 @@ using System.Collections.Generic;
 
 namespace Mirror
 {
-
     public static class NetworkWriterPool
     {
-        static readonly Stack<NetworkWriter> pool = new Stack<NetworkWriter>();
+        private static readonly Stack<NetworkWriter> pool = new Stack<NetworkWriter>();
 
         public static NetworkWriter GetWriter()
         {
             if (pool.Count != 0)
             {
-                NetworkWriter writer = pool.Pop();
+                var writer = pool.Pop();
                 // reset cached writer length and position
                 writer.SetLength(0);
                 return writer;

@@ -37,11 +37,11 @@ namespace Ninja.WebSockets.Internal
         /// This is used for data masking so that web proxies don't cache the data
         /// Therefore, there are no cryptographic concerns
         /// </summary>
-        static readonly Random _random;
+        private static readonly Random _random;
 
         static WebSocketFrameWriter()
         {
-            _random = new Random((int)DateTime.Now.Ticks);
+            _random = new Random((int) DateTime.Now.Ticks);
         }
 
         /// <summary>
@@ -51,44 +51,45 @@ namespace Ninja.WebSockets.Internal
         /// <param name="fromPayload">Array segment to get payload data from</param>
         /// <param name="toStream">Stream to write to</param>
         /// <param name="isLastFrame">True is this is the last frame in this message (usually true)</param>
-        public static void Write(WebSocketOpCode opCode, ArraySegment<byte> fromPayload, MemoryStream toStream, bool isLastFrame, bool isClient)
+        public static void Write(WebSocketOpCode opCode, ArraySegment<byte> fromPayload, MemoryStream toStream,
+            bool isLastFrame, bool isClient)
         {
-            MemoryStream memoryStream = toStream;
-            byte finBitSetAsByte = isLastFrame ? (byte)0x80 : (byte)0x00;
-            byte byte1 = (byte)(finBitSetAsByte | (byte)opCode);
+            var memoryStream = toStream;
+            var finBitSetAsByte = isLastFrame ? (byte) 0x80 : (byte) 0x00;
+            var byte1 = (byte) (finBitSetAsByte | (byte) opCode);
             memoryStream.WriteByte(byte1);
 
             // NB, set the mask flag if we are constructing a client frame
-            byte maskBitSetAsByte = isClient ? (byte)0x80 : (byte)0x00;
+            var maskBitSetAsByte = isClient ? (byte) 0x80 : (byte) 0x00;
 
             // depending on the size of the length we want to write it as a byte, ushort or ulong
             if (fromPayload.Count < 126)
             {
-                byte byte2 = (byte)(maskBitSetAsByte | (byte)fromPayload.Count);
+                var byte2 = (byte) (maskBitSetAsByte | (byte) fromPayload.Count);
                 memoryStream.WriteByte(byte2);
             }
             else if (fromPayload.Count <= ushort.MaxValue)
             {
-                byte byte2 = (byte)(maskBitSetAsByte | 126);
+                var byte2 = (byte) (maskBitSetAsByte | 126);
                 memoryStream.WriteByte(byte2);
-                BinaryReaderWriter.WriteUShort((ushort)fromPayload.Count, memoryStream, false);
+                BinaryReaderWriter.WriteUShort((ushort) fromPayload.Count, memoryStream, false);
             }
             else
             {
-                byte byte2 = (byte)(maskBitSetAsByte | 127);
+                var byte2 = (byte) (maskBitSetAsByte | 127);
                 memoryStream.WriteByte(byte2);
-                BinaryReaderWriter.WriteULong((ulong)fromPayload.Count, memoryStream, false);
+                BinaryReaderWriter.WriteULong((ulong) fromPayload.Count, memoryStream, false);
             }
 
             // if we are creating a client frame then we MUST mack the payload as per the spec
             if (isClient)
             {
-                byte[] maskKey = new byte[WebSocketFrameCommon.MaskKeyLength];
+                var maskKey = new byte[WebSocketFrameCommon.MaskKeyLength];
                 _random.NextBytes(maskKey);
                 memoryStream.Write(maskKey, 0, maskKey.Length);
 
                 // mask the payload
-                ArraySegment<byte> maskKeyArraySegment = new ArraySegment<byte>(maskKey, 0, maskKey.Length);
+                var maskKeyArraySegment = new ArraySegment<byte>(maskKey, 0, maskKey.Length);
                 WebSocketFrameCommon.ToggleMask(maskKeyArraySegment, fromPayload);
             }
 

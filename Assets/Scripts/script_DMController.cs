@@ -6,23 +6,23 @@ namespace Mirror
 {
     public class script_DMController : MonoBehaviour, ISelector, IPlayer
     {
-        private List<GameObject> allowedMovement = new List<GameObject>();
+        private List<GameObject> _allowedMovement = new List<GameObject>();
         public int availableMovement;
-        private Text availableMovementField, trapPoints, monsterPoints;
+        private Text _availableMovementField, _trapPoints, _monsterPoints;
         public int monsterCap = 10;
         public int monsterCost;
         public List<GameObject> monsters = new List<GameObject>();
         public int movementDice;
-        private Canvas myCanvas;
-        private script_MonsterController myScript_MonsterController;
-        private script_MovementParser myScript_MovementParser;
-        private script_SelectObject myScript_SelectObject;
-        private GameObject myTile;
+        private Canvas _myCanvas;
+        private script_MonsterController _myScript_MonsterController;
+        private script_MovementParser _myScript_MovementParser;
+        private script_SelectObject _myScript_SelectObject;
+        private GameObject _myTile;
         public int numberOfMonsters;
         public GameObject selectedTrapType, selectedMonsterType;
         public int trapCap = 5;
         public int trapCost;
-        private GameObject trapMenu, activeMenu, monsterMenu;
+        private GameObject _trapMenu, _activeMenu, _monsterMenu;
         public List<GameObject> traps = new List<GameObject>();
 
         public GameObject[] trapTypes, monsterTypes;
@@ -40,16 +40,16 @@ namespace Mirror
                     monsters.Remove(null);
                 else
                     monster.GetComponent<script_MonsterController>().Unselected();
-            if (allowedMovement.Count > 0)
+            if (_allowedMovement.Count > 0)
                 try
                 {
-                    script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
+                    script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
                 }
                 catch
                 {
                 }
 
-            myCanvas.gameObject.SetActive(false);
+            _myCanvas.gameObject.SetActive(false);
             //script_GameManager.CmdNextTurn();
             //script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
         }
@@ -60,17 +60,17 @@ namespace Mirror
 
         private void Start()
         {
-            myScript_SelectObject = GetComponentInChildren<script_SelectObject>();
-            myCanvas = transform.Find("Canvas_DM").GetComponent<Canvas>();
-            trapMenu = transform.Find("Canvas_DM/TrapMenu").gameObject;
-            monsterMenu = transform.Find("Canvas_DM/MonsterMenu").gameObject;
-            activeMenu = transform.Find("Canvas_DM/ActiveHUD").gameObject;
-            availableMovementField = transform.Find("Canvas_DM/AvailableMovement/Text").GetComponent<Text>();
-            trapPoints = transform.Find("Canvas_DM/DMHUD/TrapPoints/Text").GetComponent<Text>();
-            monsterPoints = transform.Find("Canvas_DM/DMHUD/MonsterPoints/Text").GetComponent<Text>();
-            monsterPoints.text = (monsterCap - monsterCost).ToString();
-            trapPoints.text = (trapCap - trapCost).ToString();
-            myCanvas.gameObject.SetActive(false);
+            _myScript_SelectObject = GetComponentInChildren<script_SelectObject>();
+            _myCanvas = transform.Find("Canvas_DM").GetComponent<Canvas>();
+            _trapMenu = transform.Find("Canvas_DM/TrapMenu").gameObject;
+            _monsterMenu = transform.Find("Canvas_DM/MonsterMenu").gameObject;
+            _activeMenu = transform.Find("Canvas_DM/ActiveHUD").gameObject;
+            _availableMovementField = transform.Find("Canvas_DM/AvailableMovement/Text").GetComponent<Text>();
+            _trapPoints = transform.Find("Canvas_DM/DMHUD/TrapPoints/Text").GetComponent<Text>();
+            _monsterPoints = transform.Find("Canvas_DM/DMHUD/MonsterPoints/Text").GetComponent<Text>();
+            _monsterPoints.text = (monsterCap - monsterCost).ToString();
+            _trapPoints.text = (trapCap - trapCost).ToString();
+            _myCanvas.gameObject.SetActive(false);
         }
 
         private void Update()
@@ -81,9 +81,9 @@ namespace Mirror
             if (beginMyTurn)
             {
                 print("Begiiiin!!");
-                monsterPoints.text = (monsterCap - monsterCost).ToString();
-                trapPoints.text = (trapCap - trapCost).ToString();
-                myCanvas.gameObject.SetActive(true);
+                _monsterPoints.text = (monsterCap - monsterCost).ToString();
+                _trapPoints.text = (trapCap - trapCost).ToString();
+                _myCanvas.gameObject.SetActive(true);
                 //TODO Remove dead monsters
                 //TODO for every monster reset movement
                 foreach (var monster in monsters)
@@ -100,7 +100,7 @@ namespace Mirror
                 }
 
                 availableMovement = Utilities.RollDice(movementDice);
-                availableMovementField.text = "Available:" + availableMovement;
+                _availableMovementField.text = "Available:" + availableMovement;
                 beginMyTurn = false;
             }
             else if (isMyTurn)
@@ -122,7 +122,7 @@ namespace Mirror
                                 trapCost -= tileScript.myTrap.GetComponent<script_Trap>().trapCost;
                                 Destroy(tileScript.myTrap);
                                 tileScript.myTrap = null;
-                                trapPoints.text = (trapCap - trapCost).ToString();
+                                _trapPoints.text = (trapCap - trapCost).ToString();
                             }
                             else
                             {
@@ -130,7 +130,7 @@ namespace Mirror
                                 {
                                     traps.Add(PlaceTrap(selectedTrapType, altSelected, tileScript));
                                     trapCost += selectedTrapType.GetComponent<script_Trap>().trapCost;
-                                    trapPoints.text = (trapCap - trapCost).ToString();
+                                    _trapPoints.text = (trapCap - trapCost).ToString();
                                 }
                             }
                         }
@@ -149,7 +149,7 @@ namespace Mirror
                                 trapCost -= tileScript.myTrap.GetComponent<script_Trap>().trapCost;
                                 Destroy(tileScript.myTrap);
                                 tileScript.myTrap = null;
-                                trapPoints.text = (trapCap - trapCost).ToString();
+                                _trapPoints.text = (trapCap - trapCost).ToString();
                             }
                             else
                             {
@@ -157,7 +157,7 @@ namespace Mirror
                                 {
                                     traps.Add(PlaceTrap(selectedTrapType, altSelected, tileScript));
                                     trapCost += selectedTrapType.GetComponent<script_Trap>().trapCost;
-                                    trapPoints.text = (trapCap - trapCost).ToString();
+                                    _trapPoints.text = (trapCap - trapCost).ToString();
                                 }
                             }
                         }
@@ -175,19 +175,19 @@ namespace Mirror
                     if (Input.GetKeyUp(KeyCode.Space))
                     {
                         //Check if the tile is occupied
-                        myTile = selected;
-                        if (selected.tag == "MonsterSpawn" && myTile.GetComponent<script_Tile>().occupied == false)
+                        _myTile = selected;
+                        if (selected.tag == "MonsterSpawn" && _myTile.GetComponent<script_Tile>().occupied == false)
                             if (monsterCap >= monsterCost + selectedMonsterType.GetComponent<script_MonsterController>()
                                     .monsterCost)
                             {
                                 monsterCost += selectedMonsterType.GetComponent<script_MonsterController>().monsterCost;
-                                monsters.Add(Instantiate(selectedMonsterType, myTile.transform.position,
+                                monsters.Add(Instantiate(selectedMonsterType, _myTile.transform.position,
                                     Quaternion.identity));
-                                monsters[numberOfMonsters].GetComponent<script_MonsterController>().myTile = myTile;
+                                monsters[numberOfMonsters].GetComponent<script_MonsterController>().myTile = _myTile;
                                 numberOfMonsters++;
-                                monsterPoints.text = (monsterCap - monsterCost).ToString();
-                                myTile.GetComponent<script_Tile>().occupied = true;
-                                myTile.GetComponent<script_Tile>().occupier = monsters[numberOfMonsters - 1];
+                                _monsterPoints.text = (monsterCap - monsterCost).ToString();
+                                _myTile.GetComponent<script_Tile>().occupied = true;
+                                _myTile.GetComponent<script_Tile>().occupier = monsters[numberOfMonsters - 1];
                             }
                     }
 
@@ -195,7 +195,7 @@ namespace Mirror
                     {
                         try
                         {
-                            script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
+                            script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
                         }
                         catch
                         {
@@ -206,39 +206,39 @@ namespace Mirror
 
                     if (selected != null && selected.tag == "Monster")
                     {
-                        myScript_MonsterController = selected.GetComponent<script_MonsterController>();
-                        myScript_MovementParser = selected.GetComponent<script_MovementParser>();
-                        myScript_MonsterController.SelectedUpdate();
-                        if (myScript_MonsterController.myDirection != Enumerations.Direction.Choose)
+                        _myScript_MonsterController = selected.GetComponent<script_MonsterController>();
+                        _myScript_MovementParser = selected.GetComponent<script_MovementParser>();
+                        _myScript_MonsterController.SelectedUpdate();
+                        if (_myScript_MonsterController.myDirection != Enumerations.Direction.Choose)
                             try
                             {
-                                script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
+                                script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
                             }
                             catch
                             {
                             }
 
-                        if (myScript_MonsterController.myRemainingMovement < availableMovement)
-                            allowedMovement = myScript_MovementParser.GetAllowedMovement(selected,
-                                ref myScript_MonsterController.myDirection,
-                                myScript_MonsterController.myRemainingMovement);
+                        if (_myScript_MonsterController.myRemainingMovement < availableMovement)
+                            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected,
+                                ref _myScript_MonsterController.myDirection,
+                                _myScript_MonsterController.myRemainingMovement);
                         else
-                            allowedMovement = myScript_MovementParser.GetAllowedMovement(selected,
-                                ref myScript_MonsterController.myDirection, availableMovement);
-//                   print(myScript_MonsterController.myRemainingMovement);
-                        script_MovementPainter.AddAllowedMovementMarker(allowedMovement);
+                            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected,
+                                ref _myScript_MonsterController.myDirection, availableMovement);
+                        //                   print(myScript_MonsterController.myRemainingMovement);
+                        script_MovementPainter.AddAllowedMovementMarker(_allowedMovement);
                         if (Input.GetMouseButtonUp(1))
-                            if (allowedMovement.Count != 0)
+                            if (_allowedMovement.Count != 0)
                             {
                                 altSelected = script_SelectObject.ReturnAlternateClick();
 
-                                if (allowedMovement.Contains(altSelected))
+                                if (_allowedMovement.Contains(altSelected))
                                     if (script_BoardController.GetTileDistance(selected, altSelected) <=
                                         availableMovement)
                                     {
                                         availableMovement -=
-                                            myScript_MonsterController.Move(altSelected, allowedMovement);
-                                        availableMovementField.text = "Available:" + availableMovement;
+                                            _myScript_MonsterController.Move(altSelected, _allowedMovement);
+                                        _availableMovementField.text = "Available:" + availableMovement;
                                     }
                             }
                     }
@@ -257,14 +257,12 @@ namespace Mirror
 
                         foreach (var monster in monsters)
                         {
-                            myScript_MonsterController = monster.GetComponent<script_MonsterController>();
+                            _myScript_MonsterController = monster.GetComponent<script_MonsterController>();
                             if ((selected.tag == "Door" || selected.tag == "OpenDoor") &&
-                                script_BoardController.GetTileDistance(myScript_MonsterController.myTile, selected) <=
+                                script_BoardController.GetTileDistance(_myScript_MonsterController.myTile, selected) <=
                                 1)
-                            {
-//                                selected.GetComponent<scr_Door>().ToggleDoor();
+                                //                                selected.GetComponent<scr_Door>().ToggleDoor();
                                 break;
-                            }
                         }
                     }
 
@@ -279,10 +277,10 @@ namespace Mirror
 
         public void OnSelectMonster()
         {
-            script_MovementPainter.RemoveAllowedMovementMarker(allowedMovement);
-            allowedMovement = myScript_MovementParser.GetAllowedMovement(selected,
-                ref myScript_MonsterController.myDirection, myScript_MonsterController.myRemainingMovement);
-            script_MovementPainter.AddAllowedMovementMarker(allowedMovement);
+            script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
+            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected,
+                ref _myScript_MonsterController.myDirection, _myScript_MonsterController.myRemainingMovement);
+            script_MovementPainter.AddAllowedMovementMarker(_allowedMovement);
         }
 
         public GameObject ReturnPlayerObject()
@@ -330,26 +328,26 @@ namespace Mirror
 
         public void ToggleTrapMenu()
         {
-            if (trapMenu.activeInHierarchy == false)
-                trapMenu.SetActive(true);
+            if (_trapMenu.activeInHierarchy == false)
+                _trapMenu.SetActive(true);
             else
-                trapMenu.SetActive(false);
+                _trapMenu.SetActive(false);
         }
 
         public void ToggleMonsterMenu()
         {
-            if (monsterMenu.activeInHierarchy == false)
-                monsterMenu.SetActive(true);
+            if (_monsterMenu.activeInHierarchy == false)
+                _monsterMenu.SetActive(true);
             else
-                monsterMenu.SetActive(false);
+                _monsterMenu.SetActive(false);
         }
 
         public void ToggleActiveMenu()
         {
-            if (activeMenu.activeInHierarchy == false)
-                activeMenu.SetActive(true);
+            if (_activeMenu.activeInHierarchy == false)
+                _activeMenu.SetActive(true);
             else
-                activeMenu.SetActive(false);
+                _activeMenu.SetActive(false);
         }
     }
 }
