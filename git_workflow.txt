@@ -1,0 +1,28 @@
+Rules:
+1. 		One commit per PR, if you have made multiple commits locally you will need to squash them
+2. 		If there is a GitHub issue related to your PR your commit message should start with 'issue (number)' e.g. 'issue 31: small string fix'
+
+General:
+1. 		Fork on GitHub, which you probably did to get here
+2. 		Download the repository to your computer
+3. 		Change to the repo directory
+4. 		Set up remote upstream ( git remote add upstream https://github.com/SKefalidis/DangerousAdventures.git )
+5. 		Create a branch for new issue (git branch new-feature)
+6. 		Change to your new branch (git checkout new-feature)
+7. 		Experiment, work and have fun :-)
+8.  	Stage your changes to commit {(git add filepath1 filepath2) to add individual files or (git add .) to stage all changed files}
+9.  	Commit changes (git commit -m 'commit message')
+10.		Push your branch to GitHub (git push origin new-branch). If that fails, run the command that GitHub proposes to make a new remote branch and push
+11. 	Go to your GitHub fork and press the 'Pull Request' button
+
+Merge Conflicts:
+
+If merge conflicts arise, you'll need to rebase your issue branch. To do that:
+1. 		Download the latest upstream master (git fetch upstream master)
+2. 		Go to the local master branch (git checkout master)
+3. 		Update the local master branch (git merge upstream/master)
+4. 		Rebase your issue branch that has merge conflicts (git checkout issue-branch; git rebase master)
+5. 		There will be some merge conflicts and you will need to go to those files and resolve them
+6. 		git add .
+7. 		git rebase --continue
+8. 		Push your local issue branch again
