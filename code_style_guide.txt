@@ -3,9 +3,13 @@ https://github.com/dotnet/codeformatter
 
 Other rules:
 
-1. public variables are written before/above private variables
-2. always use braces
-3. use foreach instead of for loops when possible
-4. use print instead of Debug.Log when possible
-5. use var for simple/obvious types (like int and bool) or for very large types
-6. don't do this -> if (something) print("Hello World"); 
+1. 	public variables are written before/above private variables
+2. 	always use braces
+3. 	use foreach instead of for loops when possible
+4. 	use print instead of Debug.Log when possible
+5. 	use var for simple/obvious types (like int and bool) or for very large types
+6. 	don't do this -> if (something) print("Hello World"); 
+7. 	enumeration value start with a Capital letter.
+8. 	functions and classes use PascalCase
+9. 	always write private when something is not public
+10.	private variables beging with an underscore -> _privateVariable
