@@ -1,5 +1,5 @@
 # Dangerous Adventures
-## Descriptions
+## Description
   A game about treasure, adventure, mischief and love!
 ## System Requirements
   - A pc :P
