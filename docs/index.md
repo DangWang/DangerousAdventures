@@ -1,7 +1,7 @@
-# Dangerous Adventures <h1>
-## Descriptions <h2> tag
+# Dangerous Adventures
+## Descriptions
   A game about treasure, adventure, mischief and love!
-## System Requirements <h2>
+## System Requirements
   - A pc :P
   - Windows 10
   - Mouse
