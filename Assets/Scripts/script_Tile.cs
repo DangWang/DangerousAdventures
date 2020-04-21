@@ -26,11 +26,13 @@ public class script_Tile : NetworkBehaviour
         }
 
         if (items.Count != 0)
+        {
             if (who.GetComponent<scr_Inventory>() != null)
             {
                 who.GetComponent<scr_Inventory>().PickUp(items.ElementAt(0));
                 items.Remove(items.ElementAt(0));
             }
+        }
 
         return false;
     }

@@ -14,11 +14,18 @@ public class scr_Selector : NetworkBehaviour
     private void Start()
     {
         _root = transform;
-        while (_root.parent != null) _root = _root.parent;
+        while (_root.parent != null)
+        {
+            _root = _root.parent;
+        }
         if (_root.GetComponent<scr_Player>() == null)
+        {
             Debug.LogError("The root parent cannot select objects.");
+        }
         else
+        {
             _script = _root.GetComponent<scr_Player>();
+        }
     }
 
     private void Update()
@@ -43,9 +50,10 @@ public class scr_Selector : NetworkBehaviour
         {
             selected = hit.collider.gameObject;
             if (_previousSelected != null && selected != _previousSelected)
+            {
                 _previousSelected.GetComponent<SpriteRenderer>().color = Color.white;
-            if (selected.tag == "Free" || selected.tag == "Wall" || selected.tag == "PlayerSpawn" ||
-                selected.tag == "MonsterSpawn" || selected.tag == "Door" || selected.tag == "OpenDoor")
+            }
+            if (selected.tag == "Free" || selected.tag == "Wall" || selected.tag == "PlayerSpawn" || selected.tag == "MonsterSpawn" || selected.tag == "Door" || selected.tag == "OpenDoor")
             {
                 selected.GetComponent<SpriteRenderer>().color = Color.magenta;
                 _previousSelected = selected;

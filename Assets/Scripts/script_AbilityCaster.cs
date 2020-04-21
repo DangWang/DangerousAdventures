@@ -9,8 +9,7 @@ using UnityEngine;
 //TODO refactor this load and the editor load, they are the same.
 public class script_AbilityCaster : NetworkBehaviour
 {
-    public static Dictionary<string, Ability.AbilityStruct> allAbilities =
-        new Dictionary<string, Ability.AbilityStruct>();
+    public static Dictionary<string, Ability.AbilityStruct> allAbilities = new Dictionary<string, Ability.AbilityStruct>();
 
     public static void PrepareAbility(string abilityName)
     {
@@ -34,7 +33,10 @@ public class script_AbilityCaster : NetworkBehaviour
         if (myAbility.durationType == Enumerations.SpellDuration.OverTime && myAbility.duration > 1)
         {
             myAbility.duration--;
-            if (caster != null) caster.GetComponent<scr_Monster>().activeAbilities.Add(myAbility);
+            if (caster != null)
+            {
+                caster.GetComponent<scr_Monster>().activeAbilities.Add(myAbility);
+            }
         }
 
         if (!myAbility.isAOE)
@@ -43,12 +45,17 @@ public class script_AbilityCaster : NetworkBehaviour
             {
                 var attackDice = new Enumerations.AttackDie[myAbility.damage];
                 for (var i = 0; i < myAbility.damage; i++)
+                {
                     attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
+                }
                 if (isTrap)
-                    castingTarget.GetComponent<scr_CombatController>()
-                        .Defend(attackDice, Enumerations.DamageType.Pure, null);
+                {
+                    castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, Enumerations.DamageType.Pure, null);
+                }
                 else
+                {
                     castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, myAbility.damageType, null);
+                }
             }
             else if (myAbility.damage < 0)
             {
@@ -57,8 +64,12 @@ public class script_AbilityCaster : NetworkBehaviour
             }
 
             if (castingTarget.GetComponent<scr_AffectedBy>() != null)
+            {
                 foreach (var bd in myAbility.buffsDebuffs)
+                {
                     castingTarget.GetComponent<scr_AffectedBy>().AddEffect(bd);
+                }
+            }
         }
         else
         {
@@ -67,9 +78,7 @@ public class script_AbilityCaster : NetworkBehaviour
             var yoff = myAbility.tilesInAOE.ElementAt(0)[1];
             foreach (var coords in myAbility.tilesInAOE)
             {
-                castingTarget = script_BoardController.GetTileByCoords(
-                    (int)castingPoint.transform.position.x + coords[0] - xoff,
-                    (int)castingPoint.transform.position.y + coords[1] - yoff);
+                castingTarget = script_BoardController.GetTileByCoords((int)castingPoint.transform.position.x + coords[0] - xoff, (int)castingPoint.transform.position.y + coords[1] - yoff);
                 if (castingTarget.GetComponent<script_Tile>().occupied)
                 {
                     print("Casted on occupied");
@@ -78,13 +87,17 @@ public class script_AbilityCaster : NetworkBehaviour
                     {
                         var attackDice = new Enumerations.AttackDie[myAbility.damage];
                         for (var i = 0; i < myAbility.damage; i++)
+                        {
                             attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
+                        }
                         if (isTrap)
-                            castingTarget.GetComponent<scr_CombatController>()
-                                .Defend(attackDice, Enumerations.DamageType.Pure, null);
+                        {
+                            castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, Enumerations.DamageType.Pure, null);
+                        }
                         else
-                            castingTarget.GetComponent<scr_CombatController>()
-                                .Defend(attackDice, myAbility.damageType, null);
+                        {
+                            castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, myAbility.damageType, null);
+                        }
                     }
                     else if (myAbility.damage < 0)
                     {
@@ -93,8 +106,12 @@ public class script_AbilityCaster : NetworkBehaviour
                     }
 
                     if (castingTarget.GetComponent<scr_AffectedBy>() != null)
+                    {
                         foreach (var bd in myAbility.buffsDebuffs)
+                        {
                             castingTarget.GetComponent<scr_AffectedBy>().AddEffect(bd);
+                        }
+                    }
                 }
                 else
                 {
@@ -110,7 +127,10 @@ public class script_AbilityCaster : NetworkBehaviour
         if (myAbility.durationType == Enumerations.SpellDuration.OverTime && myAbility.duration > 1)
         {
             myAbility.duration--;
-            if (caster != null) caster.GetComponent<scr_Monster>().activeAbilities.Add(myAbility);
+            if (caster != null)
+            {
+                caster.GetComponent<scr_Monster>().activeAbilities.Add(myAbility);
+            }
         }
 
         if (!myAbility.isAOE)
@@ -119,12 +139,17 @@ public class script_AbilityCaster : NetworkBehaviour
             {
                 var attackDice = new Enumerations.AttackDie[myAbility.damage];
                 for (var i = 0; i < myAbility.damage; i++)
+                {
                     attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
+                }
                 if (isTrap)
-                    castingTarget.GetComponent<scr_CombatController>()
-                        .Defend(attackDice, Enumerations.DamageType.Pure, null);
+                {
+                    castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, Enumerations.DamageType.Pure, null);
+                }
                 else
+                {
                     castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, myAbility.damageType, null);
+                }
             }
             else if (myAbility.damage < 0)
             {
@@ -133,8 +158,12 @@ public class script_AbilityCaster : NetworkBehaviour
             }
 
             if (castingTarget.GetComponent<scr_AffectedBy>() != null)
+            {
                 foreach (var bd in myAbility.buffsDebuffs)
+                {
                     castingTarget.GetComponent<scr_AffectedBy>().AddEffect(bd);
+                }
+            }
         }
         else
         {
@@ -143,9 +172,7 @@ public class script_AbilityCaster : NetworkBehaviour
             var yoff = myAbility.tilesInAOE.ElementAt(0)[1];
             foreach (var coords in myAbility.tilesInAOE)
             {
-                castingTarget = script_BoardController.GetTileByCoords(
-                    (int)castingPoint.transform.position.x + coords[0] - xoff,
-                    (int)castingPoint.transform.position.y + coords[1] - yoff);
+                castingTarget = script_BoardController.GetTileByCoords((int)castingPoint.transform.position.x + coords[0] - xoff, (int)castingPoint.transform.position.y + coords[1] - yoff);
                 if (castingTarget.GetComponent<script_Tile>().occupied)
                 {
                     print("Casted on occupied");
@@ -154,13 +181,17 @@ public class script_AbilityCaster : NetworkBehaviour
                     {
                         var attackDice = new Enumerations.AttackDie[myAbility.damage];
                         for (var i = 0; i < myAbility.damage; i++)
+                        {
                             attackDice[i] = (Enumerations.AttackDie)Utilities.RollDice(1);
+                        }
                         if (isTrap)
-                            castingTarget.GetComponent<scr_CombatController>()
-                                .Defend(attackDice, Enumerations.DamageType.Pure, null);
+                        {
+                            castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, Enumerations.DamageType.Pure, null);
+                        }
                         else
-                            castingTarget.GetComponent<scr_CombatController>()
-                                .Defend(attackDice, myAbility.damageType, null);
+                        {
+                            castingTarget.GetComponent<scr_CombatController>().Defend(attackDice, myAbility.damageType, null);
+                        }
                     }
                     else if (myAbility.damage < 0)
                     {
@@ -169,8 +200,12 @@ public class script_AbilityCaster : NetworkBehaviour
                     }
 
                     if (castingTarget.GetComponent<scr_AffectedBy>() != null)
+                    {
                         foreach (var bd in myAbility.buffsDebuffs)
+                        {
                             castingTarget.GetComponent<scr_AffectedBy>().AddEffect(bd);
+                        }
+                    }
                 }
                 else
                 {

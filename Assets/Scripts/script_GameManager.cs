@@ -27,7 +27,10 @@ public class script_GameManager : NetworkBehaviour
     {
         if (isServer)
         {
-            if (Input.GetKey(KeyCode.F5)) SceneManager.LoadScene(0);
+            if (Input.GetKey(KeyCode.F5))
+            {
+                SceneManager.LoadScene(0);
+            }
             if (playersInGame == numberOfPlayers && _gameInProgress == false)
             {
                 print("Let the gaaaameeeees begiiin!");
@@ -43,10 +46,14 @@ public class script_GameManager : NetworkBehaviour
         RpcEndPlayerTurn(current);
         s_currentPlayer++;
         if (s_currentPlayer >= numberOfPlayers)
+        {
             s_currentPlayer = 0;
+        }
         print("Next player: " + myPlayers[s_currentPlayer].name);
         if (isServer)
+        {
             RpcStartPlayerTurn(myPlayers[s_currentPlayer].name);
+        }
     }
 
     [ClientRpc]

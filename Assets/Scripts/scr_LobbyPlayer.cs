@@ -12,9 +12,18 @@ public class scr_LobbyPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (Input.GetKeyUp(KeyCode.A)) CmdChangeMyText("Adventurer");
-            if (Input.GetKeyUp(KeyCode.D)) CmdChangeMyText("DM");
-            if (Input.GetKeyUp(KeyCode.R)) CmdSwitchReady();
+            if (Input.GetKeyUp(KeyCode.A))
+            {
+                CmdChangeMyText("Adventurer");
+            }
+            if (Input.GetKeyUp(KeyCode.D))
+            {
+                CmdChangeMyText("DM");
+            }
+            if (Input.GetKeyUp(KeyCode.R))
+            {
+                CmdSwitchReady();
+            }
         }
     }
 

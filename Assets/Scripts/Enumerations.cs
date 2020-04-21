@@ -106,7 +106,10 @@ public class Enumerations : MonoBehaviour
     public static Direction ChooseDirection(GameObject canvasDirections)
     {
         if (canvasDirections.activeInHierarchy == false)
+        {
             canvasDirections.SetActive(true);
+        }
+
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
             canvasDirections.SetActive(false);

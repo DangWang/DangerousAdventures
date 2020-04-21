@@ -16,15 +16,22 @@ public class scr_Inventory : NetworkBehaviour
     //Makes the position of all the items in the inventory the same as the parent gameobject.
     public void UpdateAllItemPositions()
     {
-        foreach (var g in myItems) g.transform.position = transform.position;
+        foreach (var g in myItems)
+        {
+            g.transform.position = transform.position;
+        }
     }
 
     //Checks if the character is carrying an artifact (useful for adventurers).
     public bool CarryingArtifact()
     {
         foreach (var g in myItems)
+        {
             if (g.GetComponent<scr_Item>().isArtifact)
+            {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -33,7 +40,9 @@ public class scr_Inventory : NetworkBehaviour
         item.GetComponent<SpriteRenderer>().enabled = false;
         myItems.Add(item);
         if (item.tag == "Weapon") //Automatically equips the item item if it's a weapon.
+        {
             EquipWeapon(item);
+        }
     }
 
     public void DropItem(GameObject item)
@@ -41,7 +50,9 @@ public class scr_Inventory : NetworkBehaviour
         item.GetComponent<SpriteRenderer>().enabled = false;
         myItems.Remove(item);
         if (equippedWeapons.Contains(item)) //Automatically unequips the item item if it's a weapon.
+        {
             UnequipWeapon(item);
+        }
     }
 
     //Adds the weapon modifiers to the characters stats.

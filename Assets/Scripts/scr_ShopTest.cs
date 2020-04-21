@@ -7,8 +7,12 @@ public class scr_ShopTest : MonoBehaviour
     public void OpenShopMenu()
     {
         if (shopMenu.activeInHierarchy)
+        {
             shopMenu.SetActive(false);
+        }
         else
+        {
             shopMenu.SetActive(true);
+        }
     }
 }

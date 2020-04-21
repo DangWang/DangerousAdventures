@@ -17,22 +17,35 @@ public class script_AffectedBy : MonoBehaviour
                 _bd.duration--;
                 effects.RemoveAt(i);
                 if (_bd.duration >= 0)
+                {
                     effects.Insert(i, _bd);
+                }
                 else
+                {
                     i--;
+                }
                 if (effects.Count == 0)
+                {
                     break;
+                }
             }
 
-            if (effects[i].disable == Enumerations.DisableTypes.Stun) print(gameObject.name + " stunned");
+            if (effects[i].disable == Enumerations.DisableTypes.Stun)
+            {
+                print(gameObject.name + " stunned");
+            }
         }
     }
 
     public bool CheckStunned()
     {
         foreach (var bd in effects)
+        {
             if (bd.disable == Enumerations.DisableTypes.Stun)
+            {
                 return true;
+            }
+        }
         return false;
     }
 }

@@ -19,6 +19,7 @@ public class script_UIActive : NetworkBehaviour
     {
         _i = 0;
         foreach (var monster in _dm.monsters)
+        {
             if (monster != null)
             {
                 _image = transform.Find("Monster" + _i + "/Image").GetComponent<Image>();
@@ -27,5 +28,6 @@ public class script_UIActive : NetworkBehaviour
                 _hpText.text = "Hitpoints:" + monster.GetComponent<script_MonsterController>().myHitpoints;
                 _i++;
             }
+        }
     }
 }

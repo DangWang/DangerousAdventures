@@ -69,6 +69,7 @@ public class scr_AffectedBy : NetworkBehaviour
     public void UpdateDurations()
     {
         for (var i = 0; i < effects.Count; i++)
+        {
             //Reduce the duration. If it's still >= 0 insert the changed effect (effects are immutable).
             if (effects[i].duration >= 0)
             {
@@ -76,12 +77,20 @@ public class scr_AffectedBy : NetworkBehaviour
                 _bd.duration--;
                 effects.RemoveAt(i);
                 if (_bd.duration >= 0)
+                {
                     effects.Insert(i, _bd);
+                }
                 else
+                {
                     i--;
+                }
+
                 if (effects.Count == 0)
+                {
                     break;
+                }
             }
+        }
     }
 
     //Updates the currently active effects.

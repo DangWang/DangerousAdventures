@@ -38,7 +38,9 @@ public class scr_CombatController : NetworkBehaviour
             if (parentScript.altSelected.tag == "Monster"
                 && script_BoardController.GetTileDistance(gameObject, parentScript.selected) <= attackRange
                 && attackedThisTurn == false)
+            {
                 CmdAttack(parentScript.altSelected.name);
+            }
         }
     }
 
@@ -101,8 +103,7 @@ public class scr_CombatController : NetworkBehaviour
     }
 
     //Throws defense dice for the corresponding damageType. Pure is unblockable.
-    public void Defend(Enumerations.AttackDie[] attackerDice, Enumerations.DamageType damageType,
-        scr_CombatController attacker)
+    public void Defend(Enumerations.AttackDie[] attackerDice, Enumerations.DamageType damageType, scr_CombatController attacker)
     {
         print(name + "is defending.");
         Enumerations.DefenseDie[] defenderDice;
@@ -121,7 +122,10 @@ public class scr_CombatController : NetworkBehaviour
         else if (damageType == Enumerations.DamageType.Magical)
         {
             defenderDice = new Enumerations.DefenseDie[magicalDefense];
-            for (var i = 0; i < magicalDefense; i++) defenderDice[i] = (Enumerations.DefenseDie)Utilities.RollDice(1);
+            for (var i = 0; i < magicalDefense; i++)
+            {
+                defenderDice[i] = (Enumerations.DefenseDie)Utilities.RollDice(1);
+            }
         }
         else
         {
@@ -129,6 +133,7 @@ public class scr_CombatController : NetworkBehaviour
         }
 
         for (var i = 0; i < attackerDice.Length; i++)
+        {
             if (attackerDice[i] == Enumerations.AttackDie.Hit)
             {
                 if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Block)
@@ -141,7 +146,9 @@ public class scr_CombatController : NetworkBehaviour
                 else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Retaliate)
                 {
                     if (attacker != null)
+                    {
                         attacker.TakeDamage(1);
+                    }
                 }
                 else
                 {
@@ -160,7 +167,9 @@ public class scr_CombatController : NetworkBehaviour
                 else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Retaliate)
                 {
                     if (attacker != null)
+                    {
                         attacker.TakeDamage(2);
+                    }
                 }
                 else
                 {
@@ -180,13 +189,16 @@ public class scr_CombatController : NetworkBehaviour
                 else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Retaliate)
                 {
                     if (attacker != null)
+                    {
                         attacker.TakeDamage(1);
+                    }
                 }
                 else
                 {
                     TakeDamage(1);
                 }
             }
+        }
     }
 
     //Checks for hp <= 0 are made on the "parent" script. This only deals damage.
@@ -203,7 +215,10 @@ public class scr_CombatController : NetworkBehaviour
             //play crit sound
         }
 
-        if (hp <= 0) parentScript.RpcMonsterDied(gameObject.name);
+        if (hp <= 0)
+        {
+            parentScript.RpcMonsterDied(gameObject.name);
+        }
     }
 
     public void ToggleHealthbar()
