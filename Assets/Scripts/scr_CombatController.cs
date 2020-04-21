@@ -129,16 +129,16 @@ public class scr_CombatController : NetworkBehaviour
         }
 
         for (var i = 0; i < attackerDice.Length; i++)
-            if (attackerDice[i] == Enumerations.AttackDie.hit)
+            if (attackerDice[i] == Enumerations.AttackDie.Hit)
             {
-                if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.block)
+                if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Block)
                 {
                 }
-                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.evade)
+                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Evade)
                 {
                     //play miss sound
                 }
-                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.retaliate)
+                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Retaliate)
                 {
                     if (attacker != null)
                         attacker.TakeDamage(1);
@@ -148,16 +148,16 @@ public class scr_CombatController : NetworkBehaviour
                     TakeDamage(1);
                 }
             }
-            else if (attackerDice[i] == Enumerations.AttackDie.crit)
+            else if (attackerDice[i] == Enumerations.AttackDie.Critical)
             {
-                if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.block)
+                if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Block)
                 {
                 }
-                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.evade)
+                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Evade)
                 {
                     //play miss sound
                 }
-                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.retaliate)
+                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Retaliate)
                 {
                     if (attacker != null)
                         attacker.TakeDamage(2);
@@ -167,17 +167,17 @@ public class scr_CombatController : NetworkBehaviour
                     TakeDamage(2);
                 }
             }
-            else if (attackerDice[i] == Enumerations.AttackDie.pierce)
+            else if (attackerDice[i] == Enumerations.AttackDie.Pierce)
             {
-                if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.block)
+                if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Block)
                 {
                     TakeDamage(1);
                 }
-                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.evade)
+                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Evade)
                 {
                     //play miss sound
                 }
-                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.retaliate)
+                else if (defenderDice.Length > i && defenderDice[i] == Enumerations.DefenseDie.Retaliate)
                 {
                     if (attacker != null)
                         attacker.TakeDamage(1);

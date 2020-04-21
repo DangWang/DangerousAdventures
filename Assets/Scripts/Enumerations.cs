@@ -19,17 +19,17 @@ public class Enumerations : MonoBehaviour
 
     public enum AttackDie
     {
-        blank,
-        hit,
-        crit,
-        pierce
+        Blank,
+        Hit,
+        Critical,
+        Pierce
     }
 
     public enum CharacterState
     {
-        alive,
-        respawning,
-        dead
+        Alive,
+        Respawning,
+        Dead
     }
 
     public enum DamageType
@@ -41,10 +41,10 @@ public class Enumerations : MonoBehaviour
 
     public enum DefenseDie
     {
-        fail,
-        block,
-        evade,
-        retaliate
+        Fail,
+        Block,
+        Evade,
+        Retaliate
     }
 
     public enum Direction
@@ -76,11 +76,11 @@ public class Enumerations : MonoBehaviour
 
     public enum InventorySlot
     {
-        general,
-        misc,
-        hand,
-        head,
-        body
+        General,
+        Misc,
+        Hand,
+        Head,
+        Body
     }
 
     public enum Purge

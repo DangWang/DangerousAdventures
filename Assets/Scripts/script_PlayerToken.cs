@@ -83,26 +83,26 @@ namespace Mirror
             }
 
             for (var i = 0; i < die.Length; i++)
-                if (die[i] == Enumerations.AttackDie.hit)
+                if (die[i] == Enumerations.AttackDie.Hit)
                 {
                     for (var j = 0; j < defendDice.Length; j++)
-                        if (defendDice[j] == Enumerations.DefenseDie.block)
+                        if (defendDice[j] == Enumerations.DefenseDie.Block)
                         {
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             break;
                         }
-                        else if (defendDice[j] == Enumerations.DefenseDie.evade)
+                        else if (defendDice[j] == Enumerations.DefenseDie.Evade)
                         {
                             //play miss sound
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             break;
                         }
-                        else if (defendDice[j] == Enumerations.DefenseDie.retaliate)
+                        else if (defendDice[j] == Enumerations.DefenseDie.Retaliate)
                         {
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             if (attacker != null)
                                 attacker.TakeDamage(1);
                             break;
@@ -113,28 +113,28 @@ namespace Mirror
                             TakeDamage(1);
                         }
 
-                    if (die[i] == Enumerations.AttackDie.hit) TakeDamage(1);
+                    if (die[i] == Enumerations.AttackDie.Hit) TakeDamage(1);
                 }
-                else if (die[i] == Enumerations.AttackDie.crit)
+                else if (die[i] == Enumerations.AttackDie.Critical)
                 {
                     for (var j = 0; j < defendDice.Length; j++)
-                        if (defendDice[j] == Enumerations.DefenseDie.block)
+                        if (defendDice[j] == Enumerations.DefenseDie.Block)
                         {
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             break;
                         }
-                        else if (defendDice[j] == Enumerations.DefenseDie.evade)
+                        else if (defendDice[j] == Enumerations.DefenseDie.Evade)
                         {
                             //play miss sound
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             break;
                         }
-                        else if (defendDice[j] == Enumerations.DefenseDie.retaliate)
+                        else if (defendDice[j] == Enumerations.DefenseDie.Retaliate)
                         {
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             if (attacker != null)
                                 attacker.TakeDamage(2);
                             break;
@@ -145,29 +145,29 @@ namespace Mirror
                             TakeDamage(2);
                         }
 
-                    if (die[i] == Enumerations.AttackDie.crit) TakeDamage(2);
+                    if (die[i] == Enumerations.AttackDie.Critical) TakeDamage(2);
                 }
-                else if (die[i] == Enumerations.AttackDie.pierce)
+                else if (die[i] == Enumerations.AttackDie.Pierce)
                 {
                     for (var j = 0; j < defendDice.Length; j++)
-                        if (defendDice[j] == Enumerations.DefenseDie.block)
+                        if (defendDice[j] == Enumerations.DefenseDie.Block)
                         {
-                            die[i] = Enumerations.AttackDie.hit;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Hit;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             TakeDamage(1);
                             break;
                         }
-                        else if (defendDice[j] == Enumerations.DefenseDie.evade)
+                        else if (defendDice[j] == Enumerations.DefenseDie.Evade)
                         {
                             //play miss sound
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             break;
                         }
-                        else if (defendDice[j] == Enumerations.DefenseDie.retaliate)
+                        else if (defendDice[j] == Enumerations.DefenseDie.Retaliate)
                         {
-                            die[i] = Enumerations.AttackDie.blank;
-                            defendDice[j] = Enumerations.DefenseDie.fail;
+                            die[i] = Enumerations.AttackDie.Blank;
+                            defendDice[j] = Enumerations.DefenseDie.Fail;
                             if (attacker != null)
                                 attacker.TakeDamage(1);
                             break;
@@ -178,7 +178,7 @@ namespace Mirror
                             TakeDamage(1);
                         }
 
-                    if (die[i] == Enumerations.AttackDie.hit) TakeDamage(1);
+                    if (die[i] == Enumerations.AttackDie.Hit) TakeDamage(1);
                 }
 
             _hitpointsField.text = myHitpoints.ToString();
