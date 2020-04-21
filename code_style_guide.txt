@@ -13,3 +13,10 @@ Other rules:
 8. 	functions and classes use PascalCase
 9. 	always write private when something is not public
 10.	private variables beging with an underscore -> _privateVariable
+11. For large if statements or functions with multiple parameters put one parameter on each line like this:
+	if (parentScript.altSelected.tag == "Monster"
+		&& script_BoardController.GetTileDistance(gameObject, parentScript.selected) <= attackRange
+		&& attackedThisTurn == false)
+	{
+		CmdAttack(parentScript.altSelected.name);
+	}
