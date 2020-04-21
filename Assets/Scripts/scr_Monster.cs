@@ -32,7 +32,10 @@ public class scr_Monster : NetworkBehaviour
         _combatController = GetComponent<scr_CombatController>();
         _movementController = GetComponent<scr_Movement>();
         _affectedBy = GetComponent<scr_AffectedBy>();
-        foreach (var ab in abilities) script_AbilityCaster.PrepareAbility(ab.name);
+        foreach (var ab in abilities)
+        {
+            script_AbilityCaster.PrepareAbility(ab.name);
+        }
         //parentScript = GetComponent<scr_Player>();
     }
 
@@ -54,13 +57,13 @@ public class scr_Monster : NetworkBehaviour
     public void SelectedUpdate()
     {
         if (hasAuthority)
+        {
             if (!_affectedBy.isStunned)
             {
                 if (Input.GetKeyUp(KeyCode.C) && !abilityCasted)
                 {
                     casting = !casting;
-                    if (abilities.Length == 1 && script_AbilityCaster.allAbilities[abilities[0].name].targetPoint ==
-                        Enumerations.TargetPoint.Self)
+                    if (abilities.Length == 1 && script_AbilityCaster.allAbilities[abilities[0].name].targetPoint == Enumerations.TargetPoint.Self)
                     {
                         script_AbilityCaster.CastAbility(abilities[0].name, gameObject, gameObject);
                         abilityCasted = true;
@@ -75,9 +78,13 @@ public class scr_Monster : NetworkBehaviour
 
                     //open door if in range
                     if (Input.GetMouseButtonUp(1))
+                    {
                         if ((parentScript.altSelected.tag == "Door" || parentScript.altSelected.tag == "OpenDoor")
                             && script_BoardController.GetTileDistance(gameObject, parentScript.selected) <= 1)
+                        {
                             CmdToggleDoor(parentScript.altSelected.name);
+                        }
+                    }
                 }
                 else
                 {
@@ -88,6 +95,7 @@ public class scr_Monster : NetworkBehaviour
                     }
                 }
             }
+        }
     }
 
     [Command]
@@ -113,6 +121,8 @@ public class scr_Monster : NetworkBehaviour
         parentScript.AddMonsterPoints(monsterCost, respawnTimer);
         //Destroy(gameObject);
         if (hasAuthority)
+        {
             NetworkServer.Destroy(gameObject);
+        }
     }
 }

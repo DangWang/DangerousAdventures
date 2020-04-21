@@ -36,10 +36,16 @@ namespace Mirror
         public void EndTurn()
         {
             foreach (var monster in monsters)
+            {
                 if (monster == null)
+                {
                     monsters.Remove(null);
+                }
                 else
+                {
                     monster.GetComponent<script_MonsterController>().Unselected();
+                }
+            }
             if (_allowedMovement.Count > 0)
                 try
                 {
@@ -76,8 +82,12 @@ namespace Mirror
         private void Update()
         {
             if (Input.GetKeyUp(KeyCode.Tab))
+            {
                 foreach (var monster in monsters)
+                {
                     monster.GetComponent<script_MonsterController>().ToggleHealthbar();
+                }
+            }
             if (beginMyTurn)
             {
                 print("Begiiiin!!");
@@ -107,13 +117,18 @@ namespace Mirror
             {
                 if (script_GameManager.preparationPhase)
                 {
-                    if (Input.GetKeyUp(KeyCode.I)) ToggleTrapMenu();
-                    if (Input.GetKeyUp(KeyCode.N)) EndPreparation();
+                    if (Input.GetKeyUp(KeyCode.I))
+                    {
+                        ToggleTrapMenu();
+                    }
+                    if (Input.GetKeyUp(KeyCode.N))
+                    {
+                        EndPreparation();
+                    }
                     if (Input.GetMouseButtonUp(1))
                     {
                         altSelected = script_SelectObject.ReturnAlternateClick();
-                        if (altSelected != null && CheckTrapSquareEligibility(altSelected)
-                        ) //TODO Selected.tag in allowed squares for trap
+                        if (altSelected != null && CheckTrapSquareEligibility(altSelected)) //TODO Selected.tag in allowed squares for trap
                         {
                             var tileScript = altSelected.GetComponent<script_Tile>();
                             if (tileScript.myTrap != null)
@@ -139,8 +154,7 @@ namespace Mirror
                     if (Input.GetMouseButtonUp(2))
                     {
                         altSelected = script_SelectObject.ReturnAlternateClick();
-                        if (altSelected != null && CheckTrapSquareEligibility(altSelected)
-                        ) //TODO Selected.tag in allowed squares for trap
+                        if (altSelected != null && CheckTrapSquareEligibility(altSelected)) //TODO Selected.tag in allowed squares for trap
                         {
                             var tileScript = altSelected.GetComponent<script_Tile>();
                             if (tileScript.myTrap != null)
@@ -171,24 +185,27 @@ namespace Mirror
                         return;
                     }
 
-                    if (Input.GetKeyUp(KeyCode.I)) ToggleMonsterMenu();
+                    if (Input.GetKeyUp(KeyCode.I))
+                    {
+                        ToggleMonsterMenu();
+                    }
                     if (Input.GetKeyUp(KeyCode.Space))
                     {
                         //Check if the tile is occupied
                         _myTile = selected;
                         if (selected.tag == "MonsterSpawn" && _myTile.GetComponent<script_Tile>().occupied == false)
-                            if (monsterCap >= monsterCost + selectedMonsterType.GetComponent<script_MonsterController>()
-                                    .monsterCost)
+                        {
+                            if (monsterCap >= monsterCost + selectedMonsterType.GetComponent<script_MonsterController>().monsterCost)
                             {
                                 monsterCost += selectedMonsterType.GetComponent<script_MonsterController>().monsterCost;
-                                monsters.Add(Instantiate(selectedMonsterType, _myTile.transform.position,
-                                    Quaternion.identity));
+                                monsters.Add(Instantiate(selectedMonsterType, _myTile.transform.position, Quaternion.identity));
                                 monsters[numberOfMonsters].GetComponent<script_MonsterController>().myTile = _myTile;
                                 numberOfMonsters++;
                                 _monsterPoints.text = (monsterCap - monsterCost).ToString();
                                 _myTile.GetComponent<script_Tile>().occupied = true;
                                 _myTile.GetComponent<script_Tile>().occupier = monsters[numberOfMonsters - 1];
                             }
+                        }
                     }
 
                     if (previousSelected != null && previousSelected.tag == "Monster" && selected != previousSelected)
@@ -210,6 +227,7 @@ namespace Mirror
                         _myScript_MovementParser = selected.GetComponent<script_MovementParser>();
                         _myScript_MonsterController.SelectedUpdate();
                         if (_myScript_MonsterController.myDirection != Enumerations.Direction.Choose)
+                        {
                             try
                             {
                                 script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
@@ -217,60 +235,65 @@ namespace Mirror
                             catch
                             {
                             }
+                        }
 
                         if (_myScript_MonsterController.myRemainingMovement < availableMovement)
-                            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected,
-                                ref _myScript_MonsterController.myDirection,
-                                _myScript_MonsterController.myRemainingMovement);
+                        {
+                            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected, ref _myScript_MonsterController.myDirection, _myScript_MonsterController.myRemainingMovement);
+                        }
                         else
-                            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected,
-                                ref _myScript_MonsterController.myDirection, availableMovement);
-                        //                   print(myScript_MonsterController.myRemainingMovement);
+                        {
+                            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected, ref _myScript_MonsterController.myDirection, availableMovement);
+                        }
                         script_MovementPainter.AddAllowedMovementMarker(_allowedMovement);
                         if (Input.GetMouseButtonUp(1))
+                        {
                             if (_allowedMovement.Count != 0)
                             {
                                 altSelected = script_SelectObject.ReturnAlternateClick();
 
                                 if (_allowedMovement.Contains(altSelected))
-                                    if (script_BoardController.GetTileDistance(selected, altSelected) <=
-                                        availableMovement)
+                                {
+                                    if (script_BoardController.GetTileDistance(selected, altSelected) <= availableMovement)
                                     {
-                                        availableMovement -=
-                                            _myScript_MonsterController.Move(altSelected, _allowedMovement);
+                                        availableMovement -= _myScript_MonsterController.Move(altSelected, _allowedMovement);
                                         _availableMovementField.text = "Available:" + availableMovement;
                                     }
+                                }
                             }
+                        }
                     }
 
                     if (Input.GetMouseButtonUp(0))
                     {
                         if (selected != null && selected.tag == "Player" && previousSelected.tag != null &&
                             previousSelected.tag == "Monster" &&
-                            script_BoardController.GetTileDistance(previousSelected, selected) <=
-                            previousSelected.GetComponent<script_MonsterController>().range)
+                            script_BoardController.GetTileDistance(previousSelected, selected) <= previousSelected.GetComponent<script_MonsterController>().range)
                         {
                             print("Called");
-                            previousSelected.GetComponent<script_MonsterController>()
-                                .Attack(selected.GetComponent<ICombatant>(), Enumerations.DamageType.Physical);
+                            previousSelected.GetComponent<script_MonsterController>().Attack(selected.GetComponent<ICombatant>(), Enumerations.DamageType.Physical);
                         }
 
                         foreach (var monster in monsters)
                         {
                             _myScript_MonsterController = monster.GetComponent<script_MonsterController>();
                             if ((selected.tag == "Door" || selected.tag == "OpenDoor") &&
-                                script_BoardController.GetTileDistance(_myScript_MonsterController.myTile, selected) <=
-                                1)
+                                script_BoardController.GetTileDistance(_myScript_MonsterController.myTile, selected) <= 1)
+                            {
                                 //                                selected.GetComponent<scr_Door>().ToggleDoor();
                                 break;
+                            }
                         }
                     }
 
                     //TODO this should get moved to the MonsterController
                     if (Input.GetKeyUp(KeyCode.C))
-                        if (selected != null && selected.tag == "Player" && previousSelected.tag != null &&
-                            previousSelected.tag == "Monster")
+                    {
+                        if (selected != null && selected.tag == "Player" && previousSelected.tag != null && previousSelected.tag == "Monster")
+                        {
                             script_AbilityCaster.CastAbility("heal", selected, gameObject);
+                        }
+                    }
                 }
             }
         }
@@ -278,8 +301,7 @@ namespace Mirror
         public void OnSelectMonster()
         {
             script_MovementPainter.RemoveAllowedMovementMarker(_allowedMovement);
-            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected,
-                ref _myScript_MonsterController.myDirection, _myScript_MonsterController.myRemainingMovement);
+            _allowedMovement = _myScript_MovementParser.GetAllowedMovement(selected, ref _myScript_MonsterController.myDirection, _myScript_MonsterController.myRemainingMovement);
             script_MovementPainter.AddAllowedMovementMarker(_allowedMovement);
         }
 
@@ -329,25 +351,37 @@ namespace Mirror
         public void ToggleTrapMenu()
         {
             if (_trapMenu.activeInHierarchy == false)
+            {
                 _trapMenu.SetActive(true);
+            }
             else
+            {
                 _trapMenu.SetActive(false);
+            }
         }
 
         public void ToggleMonsterMenu()
         {
             if (_monsterMenu.activeInHierarchy == false)
+            {
                 _monsterMenu.SetActive(true);
+            }
             else
+            {
                 _monsterMenu.SetActive(false);
+            }
         }
 
         public void ToggleActiveMenu()
         {
             if (_activeMenu.activeInHierarchy == false)
+            {
                 _activeMenu.SetActive(true);
+            }
             else
+            {
                 _activeMenu.SetActive(false);
+            }
         }
     }
 }

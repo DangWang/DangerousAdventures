@@ -37,9 +37,13 @@ public class scr_Movement : NetworkBehaviour
     public void CmdOnStartTurn(string tileName)
     {
         if (independentDicePool)
+        {
             availableMovement = Utilities.RollDice(movementDice);
+        }
         else
+        {
             availableMovement = 7;
+        }
         hasMoved = false;
         myDirection = Enumerations.Direction.Choose;
         myTile = GameObject.Find(tileName);
@@ -49,14 +53,19 @@ public class scr_Movement : NetworkBehaviour
     public void OnSelectedUpdate()
     {
         if (!independentDicePool && parentScript.sharedRemainingMovement < availableMovement)
+        {
             availableMovement = parentScript.sharedRemainingMovement;
+        }
         if (myDirection == Enumerations.Direction.Choose)
         {
             myDirection = Enumerations.ChooseDirection(_canvasDirections);
             if (myDirection != Enumerations.Direction.Choose)
             {
                 allowedMovement = GetAllowedMovement(myTile, ref myDirection, availableMovement);
-                if (allowedMovement.Count == 0) print("wtf");
+                if (allowedMovement.Count == 0)
+                {
+                    print("No remaining movement");
+                }
 
                 AddAllowedMovementMarker(allowedMovement);
             }
@@ -65,15 +74,20 @@ public class scr_Movement : NetworkBehaviour
         }
 
         if (Input.GetKeyUp(KeyCode.R) && hasMoved == false)
+        {
             myDirection = Enumerations.Direction.Choose;
+        }
         if (Input.GetMouseButtonUp(1))
         {
             parentScript.altSelected = script_SelectObject.ReturnAlternateClick();
 
-            if (allowedMovement.Contains(parentScript.altSelected)
-                && parentScript.altSelected.GetComponent<script_Tile>().occupied == false)
+            if (allowedMovement.Contains(parentScript.altSelected) && parentScript.altSelected.GetComponent<script_Tile>().occupied == false)
+            {
                 if (script_BoardController.GetTileDistance(myTile, parentScript.altSelected) <= availableMovement)
+                {
                     CmdMove(parentScript.altSelected.name);
+                }
+            }
             //Move(parentScript.altSelected, allowedMovement);
             RemoveAllowedMovementMarker(allowedMovement);
             // allowedMovement = GetAllowedMovement(myTile, ref myDirection, availableMovement);
@@ -140,7 +154,9 @@ public class scr_Movement : NetworkBehaviour
             //tile call method stepped on if not invisible
             activatedTrap = myTile.GetComponent<script_Tile>().SteppedOn(gameObject);
             if (activatedTrap)
+            {
                 break;
+            }
         }
 
         RpcUpdateMyTile(myTile.name);
@@ -155,8 +171,7 @@ public class scr_Movement : NetworkBehaviour
         AddAllowedMovementMarker(allowedMovement);
     }
 
-    public List<GameObject> GetAllowedMovement(GameObject myTile, ref Enumerations.Direction myDirection,
-        int availableMovement)
+    public List<GameObject> GetAllowedMovement(GameObject myTile, ref Enumerations.Direction myDirection, int availableMovement)
     {
         var tiles = new List<GameObject>();
         GameObject neighbor, tempTile = myTile;
@@ -166,21 +181,28 @@ public class scr_Movement : NetworkBehaviour
         {
             neighbor = script_BoardController.GetTileNeighbor(tempTile, myDirection);
             if (neighbor == null)
+            {
                 return tiles;
+            }
             if (myDirection != Enumerations.Direction.Choose)
             {
                 var check = false;
                 foreach (var tag in tagsOfMovementTiles)
+                {
                     if (neighbor.tag == tag)
                     {
                         check = true;
                         tempTile = neighbor;
                         tiles.Add(neighbor);
                     }
+                }
 
                 if (check == false)
                 {
-                    if (tiles.Count == 0) myDirection = Enumerations.Direction.Choose;
+                    if (tiles.Count == 0)
+                    {
+                        myDirection = Enumerations.Direction.Choose;
+                    }
                     return tiles;
                 }
             }
@@ -191,7 +213,9 @@ public class scr_Movement : NetworkBehaviour
         }
 
         if (i >= availableMovement)
+        {
             return tiles;
+        }
         Debug.LogError("problem");
         return null;
     }
@@ -199,23 +223,31 @@ public class scr_Movement : NetworkBehaviour
     public void AddAllowedMovementMarker(List<GameObject> allowedMovement)
     {
         if (hasAuthority)
+        {
             foreach (var g in allowedMovement)
             {
                 var mark = Instantiate(s_marker, g.transform.position, Quaternion.identity);
                 mark.name = "Movement_Marker";
                 mark.transform.parent = g.transform;
             }
+        }
     }
 
     public void RemoveAllowedMovementMarker(List<GameObject> allowedMovement)
     {
         if (hasAuthority)
+        {
             if (allowedMovement.Count > 0)
+            {
                 foreach (var g in allowedMovement)
                 {
                     var mark = g.transform.Find("Movement_Marker").gameObject;
                     if (mark != null)
+                    {
                         Destroy(mark);
+                    }
                 }
+            }
+        }
     }
 }

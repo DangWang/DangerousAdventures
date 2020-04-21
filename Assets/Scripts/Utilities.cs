@@ -6,8 +6,11 @@ public class Utilities : MonoBehaviour
     {
         var sum = 0;
 
-        for (var i = 0; i < number; i++) sum += Random.Range(1, 7); //returns value from 1 to 6
-        //        print(sum);
+        for (var i = 0; i < number; i++)
+        {
+            sum += Random.Range(1, 7); //returns value from 1 to 6
+        }
+
         return sum;
     }
 }

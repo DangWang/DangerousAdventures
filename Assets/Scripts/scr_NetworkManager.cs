@@ -20,8 +20,9 @@ public class scr_NetworkManager : NetworkManager
             pInfo.Add(conn.connectionId, new PlayerInfo(conn));
             pInfo[conn.connectionId].mainObject = GameObject.Find("LobbyPlayer(Clone)");
             foreach (var entry in pInfo)
-                entry.Value.mainObject.GetComponent<scr_LobbyPlayer>()
-                    .RpcChangeName("Player" + entry.Value.connection.connectionId);
+            {
+                entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().RpcChangeName("Player" + entry.Value.connection.connectionId);
+            }
         }
         else
         {
@@ -52,12 +53,18 @@ public class scr_NetworkManager : NetworkManager
         {
             ready = true;
             foreach (var entry in pInfo)
+            {
                 if (entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().isReady == false)
+                {
                     ready = false;
+                }
+            }
             if (ready && !loaded && (pInfo[0] != null) & pInfo[0].mainObject.GetComponent<scr_LobbyPlayer>().isReady)
             {
                 foreach (var entry in pInfo)
+                {
                     entry.Value.role = entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().myRole;
+                }
                 singleton.ServerChangeScene("DM_Control2");
                 loaded = true;
             }
