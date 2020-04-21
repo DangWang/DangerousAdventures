@@ -1,0 +1,5 @@
+Unity version 2019.3
+
+1. Build the game (ctrl + b or ctrl + shift + b).
+2. Copy the Abilities and Maps folders in the build folder (where you placed the executable).
+3. Run the executable.
