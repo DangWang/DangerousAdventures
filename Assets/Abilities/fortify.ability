@@ -1,12 +1,12 @@
-Name:      Fortify
-Description:      Defense dice.
+Name:       Fortify
+Description:       Defense dice.
 IsAOE: True
 IsActive: 1
 ChargesTurn: 1
 CastRange: 0
-AllowedTargets:    Untagged
+AllowedTargets:     Untagged
 DurationType: 1
-Duration: 2
+Duration: 1
 DamageDispellEffect: False
 TransformSquare: 0
 SquareChange: 0
