@@ -1512,7 +1512,7 @@ GameObject:
   - component: {fileID: 1591047241018246900}
   - component: {fileID: 49008048516669611}
   m_Layer: 0
-  m_Name: SkelletonWarriorNew
+  m_Name: SkeletonWarriorNew
   m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1594,7 +1594,7 @@ MonoBehaviour:
   syncInterval: 0.1
   attackedThisTurn: 0
   attackRange: 1
-  hp: 5
+  hp: 6
   magicalAttack: 0
   magicalDefense: 0
   parentScript: {fileID: 0}
