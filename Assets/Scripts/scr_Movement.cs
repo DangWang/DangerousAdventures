@@ -76,6 +76,7 @@ public class scr_Movement : NetworkBehaviour
         if (Input.GetKeyUp(KeyCode.R) && hasMoved == false)
         {
             myDirection = Enumerations.Direction.Choose;
+            RemoveAllowedMovementMarker(allowedMovement);
         }
         if (Input.GetMouseButtonUp(1))
         {
