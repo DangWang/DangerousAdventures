@@ -10,8 +10,8 @@ public class script_GameManager : NetworkBehaviour
     public static int maxNumberOfPlayers = 3;
     public static scr_Player[] myPlayers = new scr_Player[maxNumberOfPlayers];
     public static bool preparationPhase;
-    private static int s_currentPlayer = 0;
-    private static Text s_currentPlayerText;
+    private static int _currentPlayer = 0;
+    private static Text _currentPlayerText;
     private bool _gameInProgress;
 
     private void Start()
@@ -41,15 +41,15 @@ public class script_GameManager : NetworkBehaviour
     public void RpcNextTurn(string current)
     {
         RpcEndPlayerTurn(current);
-        s_currentPlayer++;
-        if (s_currentPlayer >= playersInGame)
+        _currentPlayer++;
+        if (_currentPlayer >= playersInGame)
         {
-            s_currentPlayer = 0;
+            _currentPlayer = 0;
         }
-        print("Next player: " + myPlayers[s_currentPlayer].name);
+        print("Next player: " + myPlayers[_currentPlayer].name);
         if (isServer)
         {
-            RpcStartPlayerTurn(myPlayers[s_currentPlayer].name);
+            RpcStartPlayerTurn(myPlayers[_currentPlayer].name);
         }
     }
 
