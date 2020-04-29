@@ -23,6 +23,8 @@ public class scr_NetworkManager : NetworkManager
             {
                 entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().RpcChangeName("Player" + entry.Value.connection.connectionId);
             }
+
+            script_GameManager.playersInLobby++;
         }
         else
         {
@@ -42,8 +44,8 @@ public class scr_NetworkManager : NetworkManager
                 NetworkServer.AddPlayerForConnection(conn, newPlayer);
             }
 
-            script_GameManager.myPlayers[script_GameManager.playersInGame++] = newPlayer.GetComponent<scr_Player>();
-            //NetworkServer.ReplacePlayerForConnection(conn, newPlayer);
+            script_GameManager.myPlayers[script_GameManager.playersInGame] = newPlayer.GetComponent<scr_Player>();
+            script_GameManager.playersInGame++;
         }
     }
 

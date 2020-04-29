@@ -5,22 +5,19 @@ using UnityEngine.UI;
 
 public class script_GameManager : NetworkBehaviour
 {
+    public static int playersInLobby = 0;
     public static int playersInGame = 0;
-    public static int numberOfPlayers = 2;
-    public static scr_Player[] myPlayers = new scr_Player[numberOfPlayers];
+    public static int maxNumberOfPlayers = 3;
+    public static scr_Player[] myPlayers = new scr_Player[maxNumberOfPlayers];
     public static bool preparationPhase;
-    private static int s_currentPlayer = 1;
+    private static int s_currentPlayer = 0;
     private static Text s_currentPlayerText;
     private bool _gameInProgress;
 
     private void Start()
-    {
-        //myPlayers[0] = GameObject.Find("DMNew").GetComponent<scr_Player>();
-        //myPlayers[1] = GameObject.Find("PlayerNew").GetComponent<scr_Player>();
-        //currentPlayerText = transform.Find("Canvas/CurrentPlayer/Text").GetComponent<Text>();
+    { ;
         preparationPhase = false;
         _gameInProgress = false;
-        //StartPlayerTurn(ref myPlayers[0]);//start dm turn TODO MAKE THIS SERIOUS
     }
 
     private void Update()
@@ -31,11 +28,11 @@ public class script_GameManager : NetworkBehaviour
             {
                 SceneManager.LoadScene(0);
             }
-            if (playersInGame == numberOfPlayers && _gameInProgress == false)
+            if (playersInGame == playersInLobby && _gameInProgress == false)
             {
                 print("Let the gaaaameeeees begiiin!");
                 _gameInProgress = true;
-                RpcNextTurn(myPlayers[1].name);
+                RpcNextTurn(myPlayers[playersInGame - 1].name);
             }
         }
     }
@@ -45,7 +42,7 @@ public class script_GameManager : NetworkBehaviour
     {
         RpcEndPlayerTurn(current);
         s_currentPlayer++;
-        if (s_currentPlayer >= numberOfPlayers)
+        if (s_currentPlayer >= playersInGame)
         {
             s_currentPlayer = 0;
         }
