@@ -34,7 +34,7 @@ public class scr_CombatController : NetworkBehaviour
     {
         if (Input.GetMouseButtonUp(1))
         {
-            parentScript.altSelected = script_SelectObject.ReturnAlternateClick();
+            parentScript.altSelected = scr_Selector.ReturnAlternateClick();
             if (parentScript.altSelected.tag == "Monster"
                 && script_BoardController.GetTileDistance(gameObject, parentScript.selected) <= attackRange
                 && attackedThisTurn == false)

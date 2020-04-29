@@ -79,7 +79,7 @@ public class scr_Movement : NetworkBehaviour
         }
         if (Input.GetMouseButtonUp(1))
         {
-            parentScript.altSelected = script_SelectObject.ReturnAlternateClick();
+            parentScript.altSelected = scr_Selector.ReturnAlternateClick();
 
             if (allowedMovement.Contains(parentScript.altSelected) && parentScript.altSelected.GetComponent<script_Tile>().occupied == false)
             {

@@ -100,7 +100,7 @@ public class scr_Player : NetworkBehaviour
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    altSelected = script_SelectObject.ReturnAlternateClick();
+                    altSelected = scr_Selector.ReturnAlternateClick();
                 }
                 if (previousSelected != null && previousSelected.tag == "Monster" && selected != previousSelected)
                 {
@@ -139,7 +139,7 @@ public class scr_Player : NetworkBehaviour
                 }
                 if (Input.GetMouseButtonUp(1) && selectedTrapType != null)
                 {
-                    altSelected = script_SelectObject.ReturnAlternateClick();
+                    altSelected = scr_Selector.ReturnAlternateClick();
                     if (altSelected != null)
                     {
                         var tileScript = altSelected.GetComponent<script_Tile>();
@@ -171,7 +171,7 @@ public class scr_Player : NetworkBehaviour
                 }
                 if (Input.GetMouseButtonUp(1) && selectedArtifactType != null)
                 {
-                    altSelected = script_SelectObject.ReturnAlternateClick();
+                    altSelected = scr_Selector.ReturnAlternateClick();
                     if (altSelected != null)
                     {
                         var tileScript = altSelected.GetComponent<script_Tile>();

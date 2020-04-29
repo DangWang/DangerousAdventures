@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class script_UITrap : NetworkBehaviour
 {
-    private script_DMController _dm;
     private Image _image;
     private Text _text;
 
