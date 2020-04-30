@@ -9,7 +9,7 @@ public class scr_Movement : NetworkBehaviour
     public List<GameObject> allowedMovement = new List<GameObject>();
     [SyncVar] public int availableMovement;
     private GameObject _canvasDirections;
-    [SyncVar] public bool hasMoved;
+    [SyncVar] public bool isMoving;
     [SyncVar] public bool independentDicePool;
     [SyncVar] public int movementDice;
     [SyncVar] public Enumerations.Direction myDirection = Enumerations.Direction.Choose;
@@ -44,7 +44,7 @@ public class scr_Movement : NetworkBehaviour
         {
             availableMovement = 7;
         }
-        hasMoved = false;
+        isMoving = false;
         myDirection = Enumerations.Direction.Choose;
         myTile = GameObject.Find(tileName);
     }
@@ -73,7 +73,7 @@ public class scr_Movement : NetworkBehaviour
             CmdUpdateDirection(myDirection);
         }
 
-        if (Input.GetKeyUp(KeyCode.R) && hasMoved == false)
+        if (Input.GetKeyUp(KeyCode.R) && isMoving == false)
         {
             myDirection = Enumerations.Direction.Choose;
             RemoveAllowedMovementMarker(allowedMovement);
@@ -139,11 +139,12 @@ public class scr_Movement : NetworkBehaviour
             if (tileTemp.GetComponent<script_Tile>().occupied)
             {
                 myDirection = Enumerations.Direction.Choose;
+                isMoving = false;
                 break;
             }
 
             tilesMoved++;
-            hasMoved = true;
+            isMoving = true;
             myTile.GetComponent<script_Tile>().occupied = false;
             myTile.GetComponent<script_Tile>().occupier = null;
             myTile = tileTemp;
@@ -203,6 +204,7 @@ public class scr_Movement : NetworkBehaviour
                     if (tiles.Count == 0)
                     {
                         myDirection = Enumerations.Direction.Choose;
+                        isMoving = false;
                     }
                     return tiles;
                 }
