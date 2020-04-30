@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 
@@ -61,7 +62,7 @@ public class scr_NetworkManager : NetworkManager
                     ready = false;
                 }
             }
-            if (ready && !loaded && (pInfo[0] != null) & pInfo[0].mainObject.GetComponent<scr_LobbyPlayer>().isReady)
+            if (ready && !loaded && pInfo.Any() && (pInfo[0] != null) & pInfo[0].mainObject.GetComponent<scr_LobbyPlayer>().isReady)
             {
                 foreach (var entry in pInfo)
                 {
