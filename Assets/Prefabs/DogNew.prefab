@@ -1565,7 +1565,7 @@ MonoBehaviour:
   syncInterval: 0.1
   abilities:
   - {fileID: 102900000, guid: 3e515c7052dd26d408592daf7e7bec2d, type: 3}
-  abilityCasted: 0
+  abilityCasted: 1
   abilityCount: 0
   casting: 0
   goldDropped: 2
@@ -1618,7 +1618,7 @@ MonoBehaviour:
   syncInterval: 0.1
   allowedMovement: []
   availableMovement: 0
-  hasMoved: 0
+  isMoving: 0
   independentDicePool: 0
   movementDice: 0
   myDirection: -1
@@ -1723,6 +1723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  tempName: 
 --- !u!1 &5898025750766095496
 GameObject:
   m_ObjectHideFlags: 0
