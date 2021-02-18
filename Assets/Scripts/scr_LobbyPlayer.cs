@@ -74,37 +74,18 @@ public class scr_LobbyPlayer : NetworkRoomPlayer
         scrollPosition = GUILayout.BeginScrollView(scrollPosition, true, false, 
             GUILayout.Width(Screen.width / 2 - gapHorizontal * 2), GUILayout.Height(Screen.height / 2));
         
-        GUILayout.BeginHorizontal("", GUIStyle.none);
         foreach (var player in room.roomSlots)
         {
             player.DrawGui();
         }
-        GUILayout.EndHorizontal();
 
         GUILayout.EndScrollView();
         GUILayout.EndArea();
-        
-        if (NetworkClient.active && isLocalPlayer)
-        {
-            GUILayout.BeginArea(new Rect(gapHorizontal * 2, 180f + Screen.height / 2 - 50f, 120f, 20f));
-
-            if (readyToBegin)
-            {
-                if (GUILayout.Button("Cancel"))
-                    CmdChangeReadyState(false);
-            }
-            else
-            {
-                if (GUILayout.Button("Ready"))
-                    CmdChangeReadyState(true);
-            }
-
-            GUILayout.EndArea();
-        }
     }
 
     public override void DrawGui()
     {
+        GUILayout.BeginHorizontal();
         GUILayout.BeginVertical();
 
         GUILayout.Label($"Player [{index + 1}]");
@@ -115,7 +96,9 @@ public class scr_LobbyPlayer : NetworkRoomPlayer
             GUILayout.Label("Not Ready");
         GUILayout.Label("Role:");
         GUILayout.Label(myRole);
-
+        
+        GUILayout.EndVertical();
+        
         if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("REMOVE"))
         {
             // This button only shows on the Host for all players other than the Host
@@ -123,7 +106,22 @@ public class scr_LobbyPlayer : NetworkRoomPlayer
             // Host can kick a Player this way.
             GetComponent<NetworkIdentity>().connectionToClient.Disconnect();
         }
-
-        GUILayout.EndVertical();
+        
+        if (NetworkClient.active && isLocalPlayer)
+        {
+            if (readyToBegin)
+            {
+                if (GUILayout.Button("CANCEL"))
+                    CmdChangeReadyState(false);
+            }
+            else
+            {
+                if (GUILayout.Button("READY"))
+                    CmdChangeReadyState(true);
+            }
+        }
+        
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
     }
 }
