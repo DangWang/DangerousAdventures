@@ -17,9 +17,9 @@ namespace Mirror
     /// </remarks>
     public abstract class NetworkConnection : IDisposable
     {
-        private readonly HashSet<NetworkIdentity> visList = new HashSet<NetworkIdentity>();
+        readonly HashSet<NetworkIdentity> visList = new HashSet<NetworkIdentity>();
 
-        private Dictionary<int, NetworkMessageDelegate> messageHandlers;
+        Dictionary<int, NetworkMessageDelegate> messageHandlers;
 
         /// <summary>
         /// Unique identifier for this connection that is assigned by the transport layer.
@@ -67,8 +67,14 @@ namespace Mirror
         [Obsolete("Use NetworkConnection.identity instead")]
         public NetworkIdentity playerController
         {
-            get => identity;
-            internal set => identity = value;
+            get
+            {
+                return identity;
+            }
+            internal set
+            {
+                identity = value;
+            }
         }
 
         /// <summary>
@@ -97,15 +103,12 @@ namespace Mirror
 
         // this is always true for regular connections, false for local
         // connections because it's set in the constructor and never reset.
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("isConnected will be removed because it's pointless. A NetworkConnection is always connected.")]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("isConnected will be removed because it's pointless. A NetworkConnection is always connected.")]
         public bool isConnected { get; protected set; }
 
         // this is always 0 for regular connections, -1 for local
         // connections because it's set in the constructor and never reset.
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete(
-            "hostId will be removed because it's not needed ever since we removed LLAPI as default. It's always 0 for regular connections and -1 for local connections. Use connection.GetType() == typeof(NetworkConnection) to check if it's a regular or local connection.")]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("hostId will be removed because it's not needed ever since we removed LLAPI as default. It's always 0 for regular connections and -1 for local connections. Use connection.GetType() == typeof(NetworkConnection) to check if it's a regular or local connection.")]
         public int hostId = -1;
 
         /// <summary>
@@ -163,21 +166,20 @@ namespace Mirror
         /// <summary>
         /// Obsolete: Use NetworkClient/NetworkServer.RegisterHandler{T} instead
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Use NetworkClient/NetworkServer.RegisterHandler<T> instead")]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use NetworkClient/NetworkServer.RegisterHandler<T> instead")]
         public void RegisterHandler(short msgType, NetworkMessageDelegate handler)
         {
             if (messageHandlers.ContainsKey(msgType))
-                if (LogFilter.Debug)
-                    Debug.Log("NetworkConnection.RegisterHandler replacing " + msgType);
+            {
+                if (LogFilter.Debug) Debug.Log("NetworkConnection.RegisterHandler replacing " + msgType);
+            }
             messageHandlers[msgType] = handler;
         }
 
         /// <summary>
         /// Obsolete: Use <see cref="NetworkClient.UnregisterHandler{T}"/> and <see cref="NetworkServer.UnregisterHandler{T}"/> instead
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Use NetworkClient/NetworkServer.UnregisterHandler<T> instead")]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use NetworkClient/NetworkServer.UnregisterHandler<T> instead")]
         public void UnregisterHandler(short msgType)
         {
             messageHandlers.Remove(msgType);
@@ -186,12 +188,11 @@ namespace Mirror
         /// <summary>
         /// Obsolete: use <see cref="Send{T}(T, int)"/> instead
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("use Send<T> instead")]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("use Send<T> instead")]
         public bool Send(int msgType, MessageBase msg, int channelId = Channels.DefaultReliable)
         {
             // pack message and send
-            var message = MessagePacker.PackMessage(msgType, msg);
+            byte[] message = MessagePacker.PackMessage(msgType, msg);
             return Send(new ArraySegment<byte>(message), channelId);
         }
 
@@ -204,12 +205,12 @@ namespace Mirror
         /// <returns></returns>
         public bool Send<T>(T msg, int channelId = Channels.DefaultReliable) where T : IMessageBase
         {
-            var writer = NetworkWriterPool.GetWriter();
+            NetworkWriter writer = NetworkWriterPool.GetWriter();
 
             // pack message and send allocation free
             MessagePacker.Pack(msg, writer);
             NetworkDiagnostics.OnSend(msg, channelId, writer.Position, 1);
-            var result = Send(writer.ToArraySegment(), channelId);
+            bool result = Send(writer.ToArraySegment(), channelId);
 
             NetworkWriterPool.Recycle(writer);
             return result;
@@ -224,8 +225,7 @@ namespace Mirror
         {
             if (segment.Count > Transport.activeTransport.GetMaxPacketSize(channelId))
             {
-                Debug.LogError("NetworkConnection.ValidatePacketSize: cannot send packet larger than " +
-                               Transport.activeTransport.GetMaxPacketSize(channelId) + " bytes");
+                Debug.LogError("NetworkConnection.ValidatePacketSize: cannot send packet larger than " + Transport.activeTransport.GetMaxPacketSize(channelId) + " bytes");
                 return false;
             }
 
@@ -262,21 +262,25 @@ namespace Mirror
             visList.Remove(identity);
 
             if (!isDestroyed)
+            {
                 // hide identity for this conn
                 NetworkServer.HideForConnection(identity, this);
+            }
         }
 
         internal void RemoveObservers()
         {
-            foreach (var identity in visList) identity.RemoveObserverInternal(this);
+            foreach (NetworkIdentity identity in visList)
+            {
+                identity.RemoveObserverInternal(this);
+            }
             visList.Clear();
         }
 
         /// <summary>
         /// Obsolete: Use <see cref="InvokeHandler(int, NetworkReader, int)"/> instead
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete("Use InvokeHandler<T> instead")]
+        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use InvokeHandler<T> instead")]
         public bool InvokeHandlerNoData(int msgType)
         {
             return InvokeHandler(msgType, null, -1);
@@ -284,9 +288,9 @@ namespace Mirror
 
         internal bool InvokeHandler(int msgType, NetworkReader reader, int channelId)
         {
-            if (messageHandlers.TryGetValue(msgType, out var msgDelegate))
+            if (messageHandlers.TryGetValue(msgType, out NetworkMessageDelegate msgDelegate))
             {
-                var message = new NetworkMessage
+                NetworkMessage message = new NetworkMessage
                 {
                     msgType = msgType,
                     reader = reader,
@@ -297,7 +301,6 @@ namespace Mirror
                 msgDelegate(message);
                 return true;
             }
-
             Debug.LogError("Unknown message ID " + msgType + " " + this);
             return false;
         }
@@ -312,18 +315,18 @@ namespace Mirror
         public bool InvokeHandler<T>(T msg, int channelId) where T : IMessageBase
         {
             // get writer from pool
-            var writer = NetworkWriterPool.GetWriter();
+            NetworkWriter writer = NetworkWriterPool.GetWriter();
 
             // if it is a value type,  just use typeof(T) to avoid boxing
             // this works because value types cannot be derived
             // if it is a reference type (for example IMessageBase),
             // ask the message for the real type
-            var msgType = MessagePacker.GetId(typeof(T).IsValueType ? typeof(T) : msg.GetType());
+            int msgType = MessagePacker.GetId(typeof(T).IsValueType ? typeof(T) : msg.GetType());
 
             MessagePacker.Pack(msg, writer);
-            var segment = writer.ToArraySegment();
-            var networkReader = NetworkReaderPool.GetReader(segment);
-            var result = InvokeHandler(msgType, networkReader, channelId);
+            ArraySegment<byte> segment = writer.ToArraySegment();
+            NetworkReader networkReader = NetworkReaderPool.GetReader(segment);
+            bool result = InvokeHandler(msgType, networkReader, channelId);
             NetworkReaderPool.Recycle(networkReader);
 
             // recycle writer and return
@@ -344,16 +347,17 @@ namespace Mirror
         internal void TransportReceive(ArraySegment<byte> buffer, int channelId)
         {
             // unpack message
-            var networkReader = NetworkReaderPool.GetReader(buffer);
-            if (MessagePacker.UnpackMessage(networkReader, out var msgType))
+            NetworkReader networkReader = NetworkReaderPool.GetReader(buffer);
+            if (MessagePacker.UnpackMessage(networkReader, out int msgType))
             {
                 // logging
-                if (logNetworkMessages)
-                    Debug.Log("ConnectionRecv " + this + " msgType:" + msgType + " content:" +
-                              BitConverter.ToString(buffer.Array, buffer.Offset, buffer.Count));
+                if (logNetworkMessages) Debug.Log("ConnectionRecv " + this + " msgType:" + msgType + " content:" + BitConverter.ToString(buffer.Array, buffer.Offset, buffer.Count));
 
                 // try to invoke the handler for that message
-                if (InvokeHandler(msgType, networkReader, channelId)) lastMessageTime = Time.time;
+                if (InvokeHandler(msgType, networkReader, channelId))
+                {
+                    lastMessageTime = Time.time;
+                }
             }
             else
             {
@@ -377,10 +381,14 @@ namespace Mirror
         internal void DestroyOwnedObjects()
         {
             // create a copy because the list might be modified when destroying
-            var tmp = new HashSet<NetworkIdentity>(clientOwnedObjects);
-            foreach (var netIdentity in tmp)
+            HashSet<NetworkIdentity> tmp = new HashSet<NetworkIdentity>(clientOwnedObjects);
+            foreach (NetworkIdentity netIdentity in tmp)
+            {
                 if (netIdentity != null)
+                {
                     NetworkServer.Destroy(netIdentity.gameObject);
+                }
+            }
 
             // clear the hashset because we destroyed them all
             clientOwnedObjects.Clear();

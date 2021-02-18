@@ -27,8 +27,7 @@ namespace Mirror.Websocket
             // dispatch the events from the server
             server.Connected += (connectionId) => OnServerConnected.Invoke(connectionId);
             server.Disconnected += (connectionId) => OnServerDisconnected.Invoke(connectionId);
-            server.ReceivedData += (connectionId, data) =>
-                OnServerDataReceived.Invoke(connectionId, data, Channels.DefaultReliable);
+            server.ReceivedData += (connectionId, data) => OnServerDataReceived.Invoke(connectionId, data, Channels.DefaultReliable);
             server.ReceivedError += (connectionId, error) => OnServerError.Invoke(connectionId, error);
 
             // dispatch events from the client
@@ -51,28 +50,28 @@ namespace Mirror.Websocket
         }
 
         // client
-        public override bool ClientConnected()
-        {
-            return client.IsConnected;
-        }
+        public override bool ClientConnected() => client.IsConnected;
 
         public override void ClientConnect(string host)
         {
             if (Secure)
+            {
                 client.Connect(new Uri($"wss://{host}:{port}"));
+            }
             else
+            {
                 client.Connect(new Uri($"ws://{host}:{port}"));
+            }
         }
 
         public override void ClientConnect(Uri uri)
         {
             if (uri.Scheme != Scheme && uri.Scheme != SecureScheme)
-                throw new ArgumentException(
-                    $"Invalid url {uri}, use {Scheme}://host:port or {SecureScheme}://host:port instead", nameof(uri));
+                throw new ArgumentException($"Invalid url {uri}, use {Scheme}://host:port or {SecureScheme}://host:port instead", nameof(uri));
 
             if (uri.IsDefaultPort)
             {
-                var uriBuilder = new UriBuilder(uri);
+                UriBuilder uriBuilder = new UriBuilder(uri);
                 uriBuilder.Port = port;
                 uri = uriBuilder.Uri;
             }
@@ -86,15 +85,12 @@ namespace Mirror.Websocket
             return true;
         }
 
-        public override void ClientDisconnect()
-        {
-            client.Disconnect();
-        }
+        public override void ClientDisconnect() => client.Disconnect();
 
         public override Uri ServerUri()
         {
-            var builder = new UriBuilder();
-            builder.Scheme = Secure ? SecureScheme : Scheme;
+            UriBuilder builder = new UriBuilder();
+            builder.Scheme = Secure? SecureScheme : Scheme;
             builder.Host = Dns.GetHostName();
             builder.Port = port;
             return builder.Uri;
@@ -102,10 +98,7 @@ namespace Mirror.Websocket
 
 
         // server
-        public override bool ServerActive()
-        {
-            return server.Active;
-        }
+        public override bool ServerActive() => server.Active;
 
         public override void ServerStart()
         {
@@ -123,14 +116,13 @@ namespace Mirror.Websocket
                     EnabledSslProtocols = System.Security.Authentication.SslProtocols.Default
                 };
             }
-
             _ = server.Listen(port);
         }
 
         public override bool ServerSend(List<int> connectionIds, int channelId, ArraySegment<byte> segment)
         {
             // send to all
-            foreach (var connectionId in connectionIds)
+            foreach (int connectionId in connectionIds)
                 server.Send(connectionId, segment);
             return true;
         }
@@ -144,11 +136,7 @@ namespace Mirror.Websocket
         {
             return server.GetClientAddress(connectionId);
         }
-
-        public override void ServerStop()
-        {
-            server.Stop();
-        }
+        public override void ServerStop() => server.Stop();
 
         // common
         public override void Shutdown()
@@ -165,8 +153,14 @@ namespace Mirror.Websocket
 
         public override string ToString()
         {
-            if (client.Connecting || client.IsConnected) return client.ToString();
-            if (server.Active) return server.ToString();
+            if (client.Connecting || client.IsConnected)
+            {
+                return client.ToString();
+            }
+            if (server.Active)
+            {
+                return server.ToString();
+            }
             return "";
         }
     }

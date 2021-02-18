@@ -7,14 +7,13 @@
 //
 // It's also noticeable in the LoadTest project, which hardly handles 300 CCU
 // with ConcurrentQueue!
-
 using System.Collections.Generic;
 
 namespace Telepathy
 {
     public class SafeQueue<T>
     {
-        private readonly Queue<T> queue = new Queue<T>();
+        readonly Queue<T> queue = new Queue<T>();
 
         // for statistics. don't call Count and assume that it's the same after the
         // call.
@@ -49,7 +48,6 @@ namespace Telepathy
                     result = queue.Dequeue();
                     return true;
                 }
-
                 return false;
             }
         }

@@ -10,7 +10,6 @@ namespace Mirror.Authenticators
 
         // set these in the inspector
         public string username;
-
         public string password;
 
         public class AuthRequestMessage : MessageBase
@@ -46,7 +45,7 @@ namespace Mirror.Authenticators
 
         public override void OnClientAuthenticate(NetworkConnection conn)
         {
-            var authRequestMessage = new AuthRequestMessage
+            AuthRequestMessage authRequestMessage = new AuthRequestMessage
             {
                 authUsername = username,
                 authPassword = password
@@ -63,7 +62,7 @@ namespace Mirror.Authenticators
             if (msg.authUsername == username && msg.authPassword == password)
             {
                 // create and send msg to client so it knows to proceed
-                var authResponseMessage = new AuthResponseMessage
+                AuthResponseMessage authResponseMessage = new AuthResponseMessage
                 {
                     code = 100,
                     message = "Success"
@@ -77,7 +76,7 @@ namespace Mirror.Authenticators
             else
             {
                 // create and send msg to client so it knows to disconnect
-                var authResponseMessage = new AuthResponseMessage
+                AuthResponseMessage authResponseMessage = new AuthResponseMessage
                 {
                     code = 200,
                     message = "Invalid Credentials"

@@ -26,8 +26,7 @@ namespace Ninja.WebSockets
         /// <param name="options">The WebSocket client options</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns>A connected web socket instance</returns>
-        Task<WebSocket> ConnectAsync(Uri uri, WebSocketClientOptions options,
-            CancellationToken token = default(CancellationToken));
+        Task<WebSocket> ConnectAsync(Uri uri, WebSocketClientOptions options, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Connect with a stream that has already been opened and HTTP websocket upgrade request sent
@@ -41,7 +40,6 @@ namespace Ninja.WebSockets
         /// <param name="options">The WebSocket client options</param>
         /// <param name="token">The optional cancellation token</param>
         /// <returns></returns>
-        Task<WebSocket> ConnectAsync(Stream responseStream, string secWebSocketKey, WebSocketClientOptions options,
-            CancellationToken token = default(CancellationToken));
+        Task<WebSocket> ConnectAsync(Stream responseStream, string secWebSocketKey, WebSocketClientOptions options, CancellationToken token = default(CancellationToken));
     }
 }

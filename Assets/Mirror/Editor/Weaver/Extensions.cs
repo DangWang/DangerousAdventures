@@ -11,16 +11,22 @@ namespace Mirror.Weaver
                 return false;
 
             // are ANY parent classes of baseClass?
-            var parent = td.BaseType;
+            TypeReference parent = td.BaseType;
             while (parent != null)
             {
-                var parentName = parent.FullName;
+                string parentName = parent.FullName;
 
                 // strip generic parameters
-                var index = parentName.IndexOf('<');
-                if (index != -1) parentName = parentName.Substring(0, index);
+                int index = parentName.IndexOf('<');
+                if (index != -1)
+                {
+                    parentName = parentName.Substring(0, index);
+                }
 
-                if (parentName == baseClass.FullName) return true;
+                if (parentName == baseClass.FullName)
+                {
+                    return true;
+                }
                 try
                 {
                     parent = parent.Resolve().BaseType;
@@ -32,30 +38,33 @@ namespace Mirror.Weaver
                     break;
                 }
             }
-
             return false;
         }
 
         public static TypeReference GetEnumUnderlyingType(this TypeDefinition td)
         {
-            foreach (var field in td.Fields)
+            foreach (FieldDefinition field in td.Fields)
+            {
                 if (!field.IsStatic)
                     return field.FieldType;
+            }
             throw new ArgumentException($"Invalid enum {td.FullName}");
         }
 
         public static bool ImplementsInterface(this TypeDefinition td, TypeReference baseInterface)
         {
-            var typedef = td;
+            TypeDefinition typedef = td;
             while (typedef != null)
             {
-                foreach (var iface in typedef.Interfaces)
+                foreach (InterfaceImplementation iface in typedef.Interfaces)
+                {
                     if (iface.InterfaceType.FullName == baseInterface.FullName)
                         return true;
+                }
 
                 try
                 {
-                    var parent = typedef.BaseType;
+                    TypeReference parent = typedef.BaseType;
                     typedef = parent?.Resolve();
                 }
                 catch (AssemblyResolutionException)
@@ -71,8 +80,8 @@ namespace Mirror.Weaver
 
         public static bool IsArrayType(this TypeReference tr)
         {
-            if (tr.IsArray && ((ArrayType) tr).ElementType.IsArray || // jagged array
-                tr.IsArray && ((ArrayType) tr).Rank > 1) // multidimensional array
+            if ((tr.IsArray && ((ArrayType)tr).ElementType.IsArray) || // jagged array
+                (tr.IsArray && ((ArrayType)tr).Rank > 1)) // multidimensional array
                 return false;
             return true;
         }
@@ -81,11 +90,14 @@ namespace Mirror.Weaver
         {
             while (parent != null)
             {
-                if (parent.Scope.Name == "Windows") return false;
+                if (parent.Scope.Name == "Windows")
+                {
+                    return false;
+                }
 
                 if (parent.Scope.Name == "mscorlib")
                 {
-                    var resolved = parent.Resolve();
+                    TypeDefinition resolved = parent.Resolve();
                     return resolved != null;
                 }
 
@@ -98,7 +110,6 @@ namespace Mirror.Weaver
                     return false;
                 }
             }
-
             return true;
         }
 
@@ -107,20 +118,20 @@ namespace Mirror.Weaver
         // and a generic instance such as ArraySegment<int>
         // Creates a reference to the specialized method  ArraySegment<int>.get_Count;
         // Note that calling ArraySegment<T>.get_Count directly gives an invalid IL error
-        public static MethodReference MakeHostInstanceGeneric(this MethodReference self,
-            GenericInstanceType instanceType)
+        public static MethodReference MakeHostInstanceGeneric(this MethodReference self, GenericInstanceType instanceType)
         {
-            var reference = new MethodReference(self.Name, self.ReturnType, instanceType)
+
+            MethodReference reference = new MethodReference(self.Name, self.ReturnType, instanceType)
             {
                 CallingConvention = self.CallingConvention,
                 HasThis = self.HasThis,
                 ExplicitThis = self.ExplicitThis
             };
 
-            foreach (var parameter in self.Parameters)
+            foreach (ParameterDefinition parameter in self.Parameters)
                 reference.Parameters.Add(new ParameterDefinition(parameter.ParameterType));
 
-            foreach (var generic_parameter in self.GenericParameters)
+            foreach (GenericParameter generic_parameter in self.GenericParameters)
                 reference.GenericParameters.Add(new GenericParameter(generic_parameter.Name, reference));
 
             return Weaver.CurrentAssembly.MainModule.ImportReference(reference);
@@ -128,10 +139,13 @@ namespace Mirror.Weaver
 
         public static CustomAttribute GetCustomAttribute(this MethodDefinition method, string attributeName)
         {
-            foreach (var ca in method.CustomAttributes)
+            foreach (CustomAttribute ca in method.CustomAttributes)
+            {
                 if (ca.AttributeType.FullName == attributeName)
                     return ca;
+            }
             return null;
         }
+
     }
 }

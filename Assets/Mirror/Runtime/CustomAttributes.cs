@@ -4,8 +4,7 @@ using UnityEngine;
 
 namespace Mirror
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete("Use NetworkBehaviour.syncInterval field instead. Can be modified in the Inspector too.")]
+    [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use NetworkBehaviour.syncInterval field instead. Can be modified in the Inspector too.")]
     [AttributeUsage(AttributeTargets.Class)]
     public class NetworkSettingsAttribute : Attribute
     {
@@ -64,41 +63,31 @@ namespace Mirror
     /// <para>Prints a warning if a client tries to execute this method.</para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ServerAttribute : Attribute
-    {
-    }
+    public class ServerAttribute : Attribute { }
 
     /// <summary>
     /// Prevents clients from running this method.
     /// <para>No warning is thrown.</para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ServerCallbackAttribute : Attribute
-    {
-    }
+    public class ServerCallbackAttribute : Attribute { }
 
     /// <summary>
     /// Prevents the server from running this method.
     /// <para>Prints a warning if the server tries to execute this method.</para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ClientAttribute : Attribute
-    {
-    }
+    public class ClientAttribute : Attribute { }
 
     /// <summary>
     /// Prevents the server from running this method.
     /// <para>No warning is printed.</para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ClientCallbackAttribute : Attribute
-    {
-    }
+    public class ClientCallbackAttribute : Attribute { }
 
     /// <summary>
     /// Converts a string property into a Scene property in the inspector
     /// </summary>
-    public class SceneAttribute : PropertyAttribute
-    {
-    }
+    public class SceneAttribute : PropertyAttribute { }
 }

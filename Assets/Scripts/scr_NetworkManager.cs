@@ -3,7 +3,7 @@ using System.Linq;
 using Mirror;
 using UnityEngine;
 
-public class scr_NetworkManager : NetworkManager
+public class scr_NetworkManager : NetworkRoomManager
 {
     public bool loaded;
 
@@ -52,26 +52,26 @@ public class scr_NetworkManager : NetworkManager
 
     private void Update()
     {
-        if (!loaded)
-        {
-            ready = true;
-            foreach (var entry in pInfo)
-            {
-                if (entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().isReady == false)
-                {
-                    ready = false;
-                }
-            }
-            if (ready && !loaded && pInfo.Any() && (pInfo[0] != null) & pInfo[0].mainObject.GetComponent<scr_LobbyPlayer>().isReady)
-            {
-                foreach (var entry in pInfo)
-                {
-                    entry.Value.role = entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().myRole;
-                }
-                singleton.ServerChangeScene("DM_Control2");
-                loaded = true;
-            }
-        }
+        // if (!loaded)
+        // {
+        //     ready = true;
+        //     foreach (var entry in pInfo)
+        //     {
+        //         if (entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().isReady == false)
+        //         {
+        //             ready = false;
+        //         }
+        //     }
+        //     if (ready && !loaded && pInfo.Any() && (pInfo[0] != null) & pInfo[0].mainObject.GetComponent<scr_LobbyPlayer>().isReady)
+        //     {
+        //         foreach (var entry in pInfo)
+        //         {
+        //             entry.Value.role = entry.Value.mainObject.GetComponent<scr_LobbyPlayer>().myRole;
+        //         }
+        //         singleton.ServerChangeScene("DM_Control2");
+        //         loaded = true;
+        //     }
+        // }
     }
 
     public class PlayerInfo

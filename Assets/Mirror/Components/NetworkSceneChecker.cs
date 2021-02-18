@@ -20,13 +20,12 @@ namespace Mirror
         [Tooltip("Enable to force this object to be hidden from all observers.")]
         public bool forceHidden;
 
-        public static readonly Dictionary<string, HashSet<NetworkIdentity>> sceneCheckerObjects =
-            new Dictionary<string, HashSet<NetworkIdentity>>();
+        public static readonly Dictionary<string, HashSet<NetworkIdentity>> sceneCheckerObjects = new Dictionary<string, HashSet<NetworkIdentity>>();
 
-        private string currentScene;
+        string currentScene;
 
         [ServerCallback]
-        private void Awake()
+        void Awake()
         {
             currentScene = gameObject.scene.name;
         }
@@ -40,7 +39,7 @@ namespace Mirror
         }
 
         [ServerCallback]
-        private void Update()
+        void Update()
         {
             if (currentScene == gameObject.scene.name)
                 return;
@@ -68,9 +67,9 @@ namespace Mirror
             RebuildSceneObservers();
         }
 
-        private void RebuildSceneObservers()
+        void RebuildSceneObservers()
         {
-            foreach (var networkIdentity in sceneCheckerObjects[currentScene])
+            foreach (NetworkIdentity networkIdentity in sceneCheckerObjects[currentScene])
                 if (networkIdentity != null)
                     networkIdentity.RebuildObservers(false);
         }
@@ -92,7 +91,7 @@ namespace Mirror
                 return true;
 
             // Add everything in the hashset for this object's current scene
-            foreach (var networkIdentity in sceneCheckerObjects[currentScene])
+            foreach (NetworkIdentity networkIdentity in sceneCheckerObjects[currentScene])
                 if (networkIdentity != null && networkIdentity.connectionToClient != null)
                     observers.Add(networkIdentity.connectionToClient);
 
@@ -108,7 +107,7 @@ namespace Mirror
         /// <param name="visible"></param>
         public override void OnSetHostVisibility(bool visible)
         {
-            foreach (var rend in GetComponentsInChildren<Renderer>())
+            foreach (Renderer rend in GetComponentsInChildren<Renderer>())
                 rend.enabled = visible;
         }
     }

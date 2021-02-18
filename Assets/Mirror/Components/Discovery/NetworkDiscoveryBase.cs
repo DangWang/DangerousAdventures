@@ -21,22 +21,26 @@ namespace Mirror.Discovery
         where Request : IMessageBase, new()
         where Response : IMessageBase, new()
     {
-        public static bool SupportedOnThisPlatform => Application.platform != RuntimePlatform.WebGLPlayer;
+        public static bool SupportedOnThisPlatform { get { return Application.platform != RuntimePlatform.WebGLPlayer; } }
 
         // each game should have a random unique handshake,  this way you can tell if this is the same game or not
-        [HideInInspector] public long secretHandshake;
+        [HideInInspector]
+        public long secretHandshake;
 
-        [SerializeField] [Tooltip("The UDP port the server will listen for multi-cast messages")]
-        private int serverBroadcastListenPort = 47777;
+        [SerializeField]
+        [Tooltip("The UDP port the server will listen for multi-cast messages")]
+        int serverBroadcastListenPort = 47777;
 
-        [SerializeField] [Tooltip("Time in seconds between multi-cast messages")] [Range(1, 60)]
-        private float ActiveDiscoveryInterval = 3;
+        [SerializeField]
+        [Tooltip("Time in seconds between multi-cast messages")]
+        [Range(1, 60)]
+        float ActiveDiscoveryInterval = 3;
 
         protected UdpClient serverUdpClient = null;
         protected UdpClient clientUdpClient = null;
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (secretHandshake == 0)
             {
@@ -48,18 +52,18 @@ namespace Mirror.Discovery
 
         public static long RandomLong()
         {
-            var value1 = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            var value2 = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-            return value1 + ((long) value2 << 32);
+            int value1 = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            int value2 = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+            return value1 + ((long)value2 << 32);
         }
 
         // Ensure the ports are cleared no matter when Game/Unity UI exits
-        private void OnApplicationQuit()
+        void OnApplicationQuit()
         {
             Shutdown();
         }
 
-        private void Shutdown()
+        void Shutdown()
         {
             if (serverUdpClient != null)
             {
@@ -119,6 +123,7 @@ namespace Mirror.Discovery
         public async Task ServerListenAsync()
         {
             while (true)
+            {
                 try
                 {
                     await ReceiveRequestAsync(serverUdpClient);
@@ -132,18 +137,19 @@ namespace Mirror.Discovery
                 {
                     continue;
                 }
+            }
         }
 
-        private async Task ReceiveRequestAsync(UdpClient udpClient)
+        async Task ReceiveRequestAsync(UdpClient udpClient)
         {
             // only proceed if there is available data in network buffer, or otherwise Receive() will block
             // average time for UdpClient.Available : 10 us
 
-            var udpReceiveResult = await udpClient.ReceiveAsync();
+            UdpReceiveResult udpReceiveResult = await udpClient.ReceiveAsync();
 
-            var networkReader = NetworkReaderPool.GetReader(udpReceiveResult.Buffer);
+            NetworkReader networkReader = NetworkReaderPool.GetReader(udpReceiveResult.Buffer);
 
-            var handshake = networkReader.ReadInt64();
+            long handshake = networkReader.ReadInt64();
             if (handshake != secretHandshake)
             {
                 // message is not for us
@@ -151,7 +157,7 @@ namespace Mirror.Discovery
                 throw new ProtocolViolationException("Invalid handshake");
             }
 
-            var request = new Request();
+            Request request = new Request();
             request.Deserialize(networkReader);
 
             ProcessClientRequest(request, udpReceiveResult.RemoteEndPoint);
@@ -170,12 +176,12 @@ namespace Mirror.Discovery
         /// <param name="endpoint">Address of the client that sent the request</param>
         protected virtual void ProcessClientRequest(Request request, IPEndPoint endpoint)
         {
-            var info = ProcessRequest(request, endpoint);
+            Response info = ProcessRequest(request, endpoint);
 
             if (info == null)
                 return;
 
-            var writer = NetworkWriterPool.GetWriter();
+            NetworkWriter writer = NetworkWriterPool.GetWriter();
 
             try
             {
@@ -183,7 +189,7 @@ namespace Mirror.Discovery
 
                 info.Serialize(writer);
 
-                var data = writer.ToArraySegment();
+                ArraySegment<byte> data = writer.ToArraySegment();
                 // signature matches
                 // send response
                 serverUdpClient.Send(data.Array, data.Count, endpoint);
@@ -260,6 +266,7 @@ namespace Mirror.Discovery
         public async Task ClientListenAsync()
         {
             while (true)
+            {
                 try
                 {
                     await ReceiveGameBroadcastAsync(clientUdpClient);
@@ -273,6 +280,7 @@ namespace Mirror.Discovery
                 {
                     Debug.LogException(ex);
                 }
+            }
         }
 
         /// <summary>
@@ -283,19 +291,19 @@ namespace Mirror.Discovery
             if (clientUdpClient == null)
                 return;
 
-            var endPoint = new IPEndPoint(IPAddress.Broadcast, serverBroadcastListenPort);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast, serverBroadcastListenPort);
 
-            var writer = NetworkWriterPool.GetWriter();
+            NetworkWriter writer = NetworkWriterPool.GetWriter();
 
             writer.WriteInt64(secretHandshake);
 
             try
             {
-                var request = GetRequest();
+                Request request = GetRequest();
 
                 request.Serialize(writer);
 
-                var data = writer.ToArraySegment();
+                ArraySegment<byte> data = writer.ToArraySegment();
 
                 clientUdpClient.SendAsync(data.Array, data.Count, endPoint);
             }
@@ -316,19 +324,16 @@ namespace Mirror.Discovery
         /// Override if you wish to include additional data in the discovery message
         /// such as desired game mode, language, difficulty, etc... </remarks>
         /// <returns>An instance of ServerRequest with data to be broadcasted</returns>
-        protected virtual Request GetRequest()
-        {
-            return new Request();
-        }
+        protected virtual Request GetRequest() => new Request();
 
-        private async Task ReceiveGameBroadcastAsync(UdpClient udpClient)
+        async Task ReceiveGameBroadcastAsync(UdpClient udpClient)
         {
             // only proceed if there is available data in network buffer, or otherwise Receive() will block
             // average time for UdpClient.Available : 10 us
 
-            var udpReceiveResult = await udpClient.ReceiveAsync();
+            UdpReceiveResult udpReceiveResult = await udpClient.ReceiveAsync();
 
-            var networkReader = NetworkReaderPool.GetReader(udpReceiveResult.Buffer);
+            NetworkReader networkReader = NetworkReaderPool.GetReader(udpReceiveResult.Buffer);
 
             if (networkReader.ReadInt64() != secretHandshake)
             {
@@ -336,7 +341,7 @@ namespace Mirror.Discovery
                 return;
             }
 
-            var response = new Response();
+            Response response = new Response();
             response.Deserialize(networkReader);
 
             ProcessResponse(response, udpReceiveResult.RemoteEndPoint);

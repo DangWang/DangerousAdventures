@@ -19,8 +19,7 @@ namespace Ninja.WebSockets.Exceptions
         {
         }
 
-        public InvalidHttpResponseCodeException(string responseCode, string responseDetails, string responseHeader) :
-            base(responseCode)
+        public InvalidHttpResponseCodeException(string responseCode, string responseDetails, string responseHeader) : base(responseCode)
         {
             ResponseCode = responseCode;
             ResponseDetails = responseDetails;

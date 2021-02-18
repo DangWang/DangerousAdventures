@@ -36,11 +36,11 @@ namespace Mirror
         [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Use Pack<T> instead")]
         public static byte[] PackMessage(int msgType, MessageBase msg)
         {
-            var writer = NetworkWriterPool.GetWriter();
+            NetworkWriter writer = NetworkWriterPool.GetWriter();
             try
             {
                 // write message type
-                writer.WriteInt16((short) msgType);
+                writer.WriteInt16((short)msgType);
 
                 // serialize message into writer
                 msg.Serialize(writer);
@@ -63,8 +63,8 @@ namespace Mirror
             // this works because value types cannot be derived
             // if it is a reference type (for example IMessageBase),
             // ask the message for the real type
-            var msgType = GetId(typeof(T).IsValueType ? typeof(T) : message.GetType());
-            writer.WriteUInt16((ushort) msgType);
+            int msgType = GetId(typeof(T).IsValueType ? typeof(T) : message.GetType());
+            writer.WriteUInt16((ushort)msgType);
 
             // serialize message into writer
             message.Serialize(writer);
@@ -76,10 +76,10 @@ namespace Mirror
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static byte[] Pack<T>(T message) where T : IMessageBase
         {
-            var writer = NetworkWriterPool.GetWriter();
+            NetworkWriter writer = NetworkWriterPool.GetWriter();
 
             Pack(message, writer);
-            var data = writer.ToArray();
+            byte[] data = writer.ToArray();
 
             NetworkWriterPool.Recycle(writer);
 
@@ -89,9 +89,9 @@ namespace Mirror
         // unpack a message we received
         public static T Unpack<T>(byte[] data) where T : IMessageBase, new()
         {
-            var networkReader = NetworkReaderPool.GetReader(data);
+            NetworkReader networkReader = NetworkReaderPool.GetReader(data);
 
-            var msgType = GetId<T>();
+            int msgType = GetId<T>();
 
             int id = networkReader.ReadUInt16();
             if (id != msgType)
@@ -100,11 +100,11 @@ namespace Mirror
                 throw new FormatException("Invalid message,  could not unpack " + typeof(T).FullName);
             }
 
-            var message = new T();
+            T message = new T();
             message.Deserialize(networkReader);
 
             NetworkReaderPool.Recycle(networkReader);
-
+            
             return message;
         }
 
@@ -127,8 +127,7 @@ namespace Mirror
             }
         }
 
-        internal static NetworkMessageDelegate MessageHandler<T>(Action<NetworkConnection, T> handler,
-            bool requireAuthenication) where T : IMessageBase, new() => networkMessage =>
+        internal static NetworkMessageDelegate MessageHandler<T>(Action<NetworkConnection, T> handler, bool requireAuthenication) where T : IMessageBase, new() => networkMessage =>
         {
             // protect against DOS attacks if attackers try to send invalid
             // data packets to crash the server/client. there are a thousand
@@ -148,8 +147,7 @@ namespace Mirror
                 if (requireAuthenication && !networkMessage.conn.isAuthenticated)
                 {
                     // message requires authentication, but the connection was not authenticated
-                    Debug.LogWarning(
-                        $"Closing connection: {networkMessage.conn}. Received message {typeof(T)} that required authentication, but the user has not authenticated yet");
+                    Debug.LogWarning($"Closing connection: {networkMessage.conn}. Received message {typeof(T)} that required authentication, but the user has not authenticated yet");
                     networkMessage.conn.Disconnect();
                     return;
                 }
@@ -158,9 +156,7 @@ namespace Mirror
             }
             catch (Exception exception)
             {
-                Debug.LogError("Closed connection: " + networkMessage.conn +
-                               ". This can happen if the other side accidentally (or an attacker intentionally) sent invalid data. Reason: " +
-                               exception);
+                Debug.LogError("Closed connection: " + networkMessage.conn + ". This can happen if the other side accidentally (or an attacker intentionally) sent invalid data. Reason: " + exception);
                 networkMessage.conn.Disconnect();
                 return;
             }

@@ -1,24 +1,21 @@
 // all the [Rpc] code from NetworkBehaviourProcessor in one place
-
 using Mono.CecilX;
 using Mono.CecilX.Cil;
-
 namespace Mirror.Weaver
 {
     public static class RpcProcessor
     {
         public const string RpcPrefix = "InvokeRpc";
 
-        public static MethodDefinition ProcessRpcInvoke(TypeDefinition td, MethodDefinition md,
-            MethodDefinition rpcCallFunc)
+        public static MethodDefinition ProcessRpcInvoke(TypeDefinition td, MethodDefinition md, MethodDefinition rpcCallFunc)
         {
-            var rpc = new MethodDefinition(
+            MethodDefinition rpc = new MethodDefinition(
                 RpcPrefix + md.Name,
                 MethodAttributes.Family | MethodAttributes.Static | MethodAttributes.HideBySig,
                 Weaver.voidType);
 
-            var rpcWorker = rpc.Body.GetILProcessor();
-            var label = rpcWorker.Create(OpCodes.Nop);
+            ILProcessor rpcWorker = rpc.Body.GetILProcessor();
+            Instruction label = rpcWorker.Create(OpCodes.Nop);
 
             NetworkBehaviourProcessor.WriteClientActiveCheck(rpcWorker, md.Name, label, "RPC");
 
@@ -62,20 +59,22 @@ namespace Mirror.Weaver
         */
         public static MethodDefinition ProcessRpcCall(TypeDefinition td, MethodDefinition md, CustomAttribute ca)
         {
-            var rpc = new MethodDefinition("Call" + md.Name, MethodAttributes.Public |
-                                                             MethodAttributes.HideBySig,
-                Weaver.voidType);
+            MethodDefinition rpc = new MethodDefinition("Call" + md.Name, MethodAttributes.Public |
+                    MethodAttributes.HideBySig,
+                    Weaver.voidType);
 
             // add paramters
-            foreach (var pd in md.Parameters)
+            foreach (ParameterDefinition pd in md.Parameters)
+            {
                 rpc.Parameters.Add(new ParameterDefinition(pd.Name, ParameterAttributes.None, pd.ParameterType));
+            }
 
             // move the old body to the new function
-            var newBody = rpc.Body;
+            MethodBody newBody = rpc.Body;
             rpc.Body = md.Body;
             md.Body = newBody;
 
-            var rpcWorker = md.Body.GetILProcessor();
+            ILProcessor rpcWorker = md.Body.GetILProcessor();
 
             NetworkBehaviourProcessor.WriteSetupLocals(rpcWorker);
 
@@ -85,9 +84,12 @@ namespace Mirror.Weaver
             if (!NetworkBehaviourProcessor.WriteArguments(rpcWorker, md, false))
                 return null;
 
-            var rpcName = md.Name;
-            var index = rpcName.IndexOf(RpcPrefix);
-            if (index > -1) rpcName = rpcName.Substring(RpcPrefix.Length);
+            string rpcName = md.Name;
+            int index = rpcName.IndexOf(RpcPrefix);
+            if (index > -1)
+            {
+                rpcName = rpcName.Substring(RpcPrefix.Length);
+            }
 
             // invoke SendInternal and return
             rpcWorker.Append(rpcWorker.Create(OpCodes.Ldarg_0)); // this

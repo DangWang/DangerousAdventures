@@ -22,19 +22,20 @@ namespace Mirror
             //    for some reason
             // => OfTypeAll so disabled objects are included too
             // => Unity 2019 returns prefabs here too, so filter them out.
-            var identities = Resources.FindObjectsOfTypeAll<NetworkIdentity>()
+            IEnumerable<NetworkIdentity> identities = Resources.FindObjectsOfTypeAll<NetworkIdentity>()
                 .Where(identity => identity.gameObject.hideFlags != HideFlags.NotEditable &&
                                    identity.gameObject.hideFlags != HideFlags.HideAndDontSave &&
                                    identity.gameObject.scene.name != "DontDestroyOnLoad" &&
                                    !PrefabUtility.IsPartOfPrefabAsset(identity.gameObject));
 
-            foreach (var identity in identities)
+            foreach (NetworkIdentity identity in identities)
             {
                 // if we had a [ConflictComponent] attribute that would be better than this check.
                 // also there is no context about which scene this is in.
                 if (identity.GetComponent<NetworkManager>() != null)
-                    Debug.LogError(
-                        "NetworkManager has a NetworkIdentity component. This will cause the NetworkManager object to be disabled, so it is not recommended.");
+                {
+                    Debug.LogError("NetworkManager has a NetworkIdentity component. This will cause the NetworkManager object to be disabled, so it is not recommended.");
+                }
 
                 // not spawned before?
                 //  OnPostProcessScene is called after additive scene loads too,
@@ -59,33 +60,29 @@ namespace Mirror
 
                         // safety check for prefabs with more than one NetworkIdentity
 #if UNITY_2018_2_OR_NEWER
-                        var prefabGO =
-                            PrefabUtility.GetCorrespondingObjectFromSource(identity.gameObject) as GameObject;
+                        GameObject prefabGO = PrefabUtility.GetCorrespondingObjectFromSource(identity.gameObject) as GameObject;
 #else
                         GameObject prefabGO = PrefabUtility.GetPrefabParent(identity.gameObject) as GameObject;
 #endif
                         if (prefabGO)
                         {
 #if UNITY_2018_3_OR_NEWER
-                            var prefabRootGO = prefabGO.transform.root.gameObject;
+                            GameObject prefabRootGO = prefabGO.transform.root.gameObject;
 #else
                             GameObject prefabRootGO = PrefabUtility.FindPrefabRoot(prefabGO);
 #endif
                             if (prefabRootGO)
+                            {
                                 if (prefabRootGO.GetComponentsInChildren<NetworkIdentity>().Length > 1)
-                                    Debug.LogWarningFormat(
-                                        "Prefab '{0}' has several NetworkIdentity components attached to itself or its children, this is not supported.",
-                                        prefabRootGO.name);
+                                {
+                                    Debug.LogWarningFormat("Prefab '{0}' has several NetworkIdentity components attached to itself or its children, this is not supported.", prefabRootGO.name);
+                                }
+                            }
                         }
                     }
                     // throwing an exception would only show it for one object
                     // because this function would return afterwards.
-                    else
-                    {
-                        Debug.LogError("Scene " + identity.gameObject.scene.path +
-                                       " needs to be opened and resaved, because the scene object " + identity.name +
-                                       " has no valid sceneId yet.");
-                    }
+                    else Debug.LogError("Scene " + identity.gameObject.scene.path + " needs to be opened and resaved, because the scene object " + identity.name + " has no valid sceneId yet.");
                 }
             }
         }

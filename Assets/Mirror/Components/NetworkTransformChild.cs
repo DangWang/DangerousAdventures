@@ -10,7 +10,8 @@ namespace Mirror
     [HelpURL("https://mirror-networking.com/docs/Components/NetworkTransformChild.html")]
     public class NetworkTransformChild : NetworkTransformBase
     {
-        [Header("Target")] public Transform target;
+        [Header("Target")]
+        public Transform target;
 
         protected override Transform targetComponent => target;
     }

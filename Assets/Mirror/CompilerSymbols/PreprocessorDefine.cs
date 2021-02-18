@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Mirror
 {
-    internal static class PreprocessorDefine
+    static class PreprocessorDefine
     {
         /// <summary>
         /// Add define symbols as soon as Unity gets done compiling.
@@ -11,8 +11,7 @@ namespace Mirror
         [InitializeOnLoadMethod]
         public static void AddDefineSymbols()
         {
-            var defines = new HashSet<string>(PlayerSettings
-                .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';'))
+            HashSet<string> defines = new HashSet<string>(PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';'))
             {
                 "MIRROR",
                 "MIRROR_1726_OR_NEWER",
@@ -25,8 +24,7 @@ namespace Mirror
                 "MIRROR_8_0_OR_NEWER",
                 "MIRROR_9_0_OR_NEWER"
             };
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup,
-                string.Join(";", defines));
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, string.Join(";", defines));
         }
     }
 }

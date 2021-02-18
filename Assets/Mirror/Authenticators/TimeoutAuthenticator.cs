@@ -12,7 +12,7 @@ namespace Mirror.Authenticators
     {
         public NetworkAuthenticator authenticator;
 
-        [Range(0, 600)] [Tooltip("Timeout to auto-disconnect in seconds. Set to 0 for no timeout.")]
+        [Range(0, 600), Tooltip("Timeout to auto-disconnect in seconds. Set to 0 for no timeout.")]
         public float timeout = 60;
 
         public void Awake()
@@ -35,7 +35,7 @@ namespace Mirror.Authenticators
                 StartCoroutine(BeginAuthentication(conn));
         }
 
-        private IEnumerator BeginAuthentication(NetworkConnection conn)
+        IEnumerator BeginAuthentication(NetworkConnection conn)
         {
             if (LogFilter.Debug) Debug.Log($"Authentication countdown started {conn} {timeout}");
 

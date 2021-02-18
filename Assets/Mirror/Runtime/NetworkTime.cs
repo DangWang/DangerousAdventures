@@ -20,25 +20,25 @@ namespace Mirror
         /// </summary>
         public static int PingWindowSize = 10;
 
-        private static double lastPingTime;
+        static double lastPingTime;
 
         // Date and time when the application started
-        private static readonly Stopwatch stopwatch = new Stopwatch();
+        static readonly Stopwatch stopwatch = new Stopwatch();
 
         static NetworkTime()
         {
             stopwatch.Start();
         }
 
-        private static ExponentialMovingAverage _rtt = new ExponentialMovingAverage(10);
-        private static ExponentialMovingAverage _offset = new ExponentialMovingAverage(10);
+        static ExponentialMovingAverage _rtt = new ExponentialMovingAverage(10);
+        static ExponentialMovingAverage _offset = new ExponentialMovingAverage(10);
 
         // the true offset guaranteed to be in this range
-        private static double offsetMin = double.MinValue;
-        private static double offsetMax = double.MaxValue;
+        static double offsetMin = double.MinValue;
+        static double offsetMax = double.MaxValue;
 
         // returns the clock time _in this system_
-        private static double LocalTime()
+        static double LocalTime()
         {
             return stopwatch.Elapsed.TotalSeconds;
         }
@@ -55,7 +55,7 @@ namespace Mirror
         {
             if (Time.time - lastPingTime >= PingFrequency)
             {
-                var pingMessage = new NetworkPingMessage(LocalTime());
+                NetworkPingMessage pingMessage = new NetworkPingMessage(LocalTime());
                 NetworkClient.Send(pingMessage);
                 lastPingTime = Time.time;
             }
@@ -68,7 +68,7 @@ namespace Mirror
         {
             if (LogFilter.Debug) Debug.Log("OnPingServerMessage  conn=" + conn);
 
-            var pongMsg = new NetworkPongMessage
+            NetworkPongMessage pongMsg = new NetworkPongMessage
             {
                 clientTime = msg.clientTime,
                 serverTime = LocalTime()
@@ -82,19 +82,19 @@ namespace Mirror
         // and update time offset
         internal static void OnClientPong(NetworkPongMessage msg)
         {
-            var now = LocalTime();
+            double now = LocalTime();
 
             // how long did this message take to come back
-            var newRtt = now - msg.clientTime;
+            double newRtt = now - msg.clientTime;
             _rtt.Add(newRtt);
 
             // the difference in time between the client and the server
             // but subtract half of the rtt to compensate for latency
             // half of rtt is the best approximation we have
-            var newOffset = now - newRtt * 0.5f - msg.serverTime;
+            double newOffset = now - newRtt * 0.5f - msg.serverTime;
 
-            var newOffsetMin = now - newRtt - msg.serverTime;
-            var newOffsetMax = now - msg.serverTime;
+            double newOffsetMin = now - newRtt - msg.serverTime;
+            double newOffsetMax = now - msg.serverTime;
             offsetMin = Math.Max(offsetMin, newOffsetMin);
             offsetMax = Math.Min(offsetMax, newOffsetMax);
 

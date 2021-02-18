@@ -37,22 +37,25 @@ namespace Ninja.WebSockets.Internal
         /// <param name="payload">The payload to mutate</param>
         public static void ToggleMask(ArraySegment<byte> maskKey, ArraySegment<byte> payload)
         {
-            if (maskKey.Count != MaskKeyLength) throw new Exception($"MaskKey key must be {MaskKeyLength} bytes");
+            if (maskKey.Count != MaskKeyLength)
+            {
+                throw new Exception($"MaskKey key must be {MaskKeyLength} bytes");
+            }
 
-            var buffer = payload.Array;
-            var maskKeyArray = maskKey.Array;
-            var payloadOffset = payload.Offset;
-            var payloadCount = payload.Count;
-            var maskKeyOffset = maskKey.Offset;
+            byte[] buffer = payload.Array;
+            byte[] maskKeyArray = maskKey.Array;
+            int payloadOffset = payload.Offset;
+            int payloadCount = payload.Count;
+            int maskKeyOffset = maskKey.Offset;
 
             // apply the mask key (this is a reversible process so no need to copy the payload)
             // NOTE: this is a hot function
             // TODO: make this faster
-            for (var i = payloadOffset; i < payloadCount; i++)
+            for (int i = payloadOffset; i < payloadCount; i++)
             {
-                var payloadIndex = i - payloadOffset; // index should start at zero
-                var maskKeyIndex = maskKeyOffset + payloadIndex % MaskKeyLength;
-                buffer[i] = (byte) (buffer[i] ^ maskKeyArray[maskKeyIndex]);
+                int payloadIndex = i - payloadOffset; // index should start at zero
+                int maskKeyIndex = maskKeyOffset + (payloadIndex % MaskKeyLength);
+                buffer[i] = (Byte)(buffer[i] ^ maskKeyArray[maskKeyIndex]);
             }
         }
     }

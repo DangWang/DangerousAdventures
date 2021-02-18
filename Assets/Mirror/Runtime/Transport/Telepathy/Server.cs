@@ -11,11 +11,11 @@ namespace Telepathy
     {
         // listener
         public TcpListener listener;
-        private Thread listenerThread;
+        Thread listenerThread;
 
         // class with all the client's data. let's call it Token for consistency
         // with the async socket methods.
-        private class ClientToken
+        class ClientToken
         {
             public TcpClient client;
 
@@ -36,17 +36,17 @@ namespace Telepathy
         }
 
         // clients with <connectionId, ClientData>
-        private readonly ConcurrentDictionary<int, ClientToken> clients = new ConcurrentDictionary<int, ClientToken>();
+        readonly ConcurrentDictionary<int, ClientToken> clients = new ConcurrentDictionary<int, ClientToken>();
 
         // connectionId counter
-        private int counter;
+        int counter;
 
         // public next id function in case someone needs to reserve an id
         // (e.g. if hostMode should always have 0 connection and external
         //  connections should start at 1, etc.)
         public int NextConnectionId()
         {
-            var id = Interlocked.Increment(ref counter);
+            int id = Interlocked.Increment(ref counter);
 
             // it's very unlikely that we reach the uint limit of 2 billion.
             // even with 1 new connection per second, this would take 68 years.
@@ -54,7 +54,10 @@ namespace Telepathy
             //    the caller probably should stop accepting clients.
             // -> it's hardly worth using 'bool Next(out id)' for that case
             //    because it's just so unlikely.
-            if (id == int.MaxValue) throw new Exception("connection id limit reached: " + id);
+            if (id == int.MaxValue)
+            {
+                throw new Exception("connection id limit reached: " + id);
+            }
 
             return id;
         }
@@ -65,7 +68,7 @@ namespace Telepathy
         // the listener thread's listen function
         // note: no maxConnections parameter. high level API should handle that.
         //       (Transport can't send a 'too full' message anyway)
-        private void Listen(int port)
+        void Listen(int port)
         {
             // absolutely must wrap with try/catch, otherwise thread
             // exceptions are silent
@@ -85,21 +88,21 @@ namespace Telepathy
                     // note: 'using' sucks here because it will try to
                     // dispose after thread was started but we still need it
                     // in the thread
-                    var client = listener.AcceptTcpClient();
+                    TcpClient client = listener.AcceptTcpClient();
 
                     // set socket options
                     client.NoDelay = NoDelay;
                     client.SendTimeout = SendTimeout;
 
                     // generate the next connection id (thread safely)
-                    var connectionId = NextConnectionId();
+                    int connectionId = NextConnectionId();
 
                     // add to dict immediately
-                    var token = new ClientToken(client);
+                    ClientToken token = new ClientToken(client);
                     clients[connectionId] = token;
 
                     // spawn a send thread for each client
-                    var sendThread = new Thread(() =>
+                    Thread sendThread = new Thread(() =>
                     {
                         // wrap in try-catch, otherwise Thread exceptions
                         // are silent
@@ -124,7 +127,7 @@ namespace Telepathy
                     sendThread.Start();
 
                     // spawn a receive thread for each client
-                    var receiveThread = new Thread(() =>
+                    Thread receiveThread = new Thread(() =>
                     {
                         // wrap in try-catch, otherwise Thread exceptions
                         // are silent
@@ -134,7 +137,7 @@ namespace Telepathy
                             ReceiveLoop(connectionId, client, receiveQueue, MaxMessageSize);
 
                             // remove client from clients dict afterwards
-                            clients.TryRemove(connectionId, out _);
+                            clients.TryRemove(connectionId, out ClientToken _);
 
                             // sendthread might be waiting on ManualResetEvent,
                             // so let's make sure to end it if the connection
@@ -216,19 +219,12 @@ namespace Telepathy
             listenerThread = null;
 
             // close all client connections
-            foreach (var kvp in clients)
+            foreach (KeyValuePair<int, ClientToken> kvp in clients)
             {
-                var client = kvp.Value.client;
+                TcpClient client = kvp.Value.client;
                 // close the stream if not closed yet. it may have been closed
                 // by a disconnect already, so use try/catch
-                try
-                {
-                    client.GetStream().Close();
-                }
-                catch
-                {
-                }
-
+                try { client.GetStream().Close(); } catch {}
                 client.Close();
             }
 
@@ -257,7 +253,6 @@ namespace Telepathy
                     token.sendPending.Set(); // interrupt SendThread WaitOne()
                     return true;
                 }
-
                 // sending to an invalid connectionId is expected sometimes.
                 // for example, if a client disconnects, the server might still
                 // try to send for one frame before it calls GetNextMessages
@@ -266,7 +261,6 @@ namespace Telepathy
                 //Logger.Log("Server.Send: invalid connectionId: " + connectionId);
                 return false;
             }
-
             Logger.LogError("Client.Send: message too big: " + data.Length + ". Limit: " + MaxMessageSize);
             return false;
         }
@@ -277,7 +271,9 @@ namespace Telepathy
             // find the connection
             ClientToken token;
             if (clients.TryGetValue(connectionId, out token))
-                return ((IPEndPoint) token.client.Client.RemoteEndPoint).Address.ToString();
+            {
+                return ((IPEndPoint)token.client.Client.RemoteEndPoint).Address.ToString();
+            }
             return "";
         }
 
@@ -293,7 +289,6 @@ namespace Telepathy
                 Logger.Log("Server.Disconnect connectionId:" + connectionId);
                 return true;
             }
-
             return false;
         }
     }
