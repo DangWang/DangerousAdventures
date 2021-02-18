@@ -235,7 +235,7 @@ PrefabInstance:
     - target: {fileID: 7079114637122300838, guid: f243dfbab48879a4d95103ac68bd910a,
         type: 3}
       propertyPath: maxConnections
-      value: 4
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7079114637122300857, guid: f243dfbab48879a4d95103ac68bd910a,
         type: 3}

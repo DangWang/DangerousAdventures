@@ -2,13 +2,24 @@
 using System.Linq;
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class scr_NetworkManager : NetworkRoomManager
 {
-    public bool loaded;
+    public class PlayerInfo
+    {
+        public NetworkConnection connection;
+        public GameObject mainObject;
+        public string role = "";
 
+        public PlayerInfo(NetworkConnection conn)
+        {
+            connection = conn;
+        }
+    }
+    
+    public bool loaded;
     public Dictionary<int, PlayerInfo> pInfo = new Dictionary<int, PlayerInfo>();
-    public bool ready;
 
     public override void OnServerAddPlayer(NetworkConnection conn, AddPlayerMessage extraMessage)
     {
@@ -73,16 +84,24 @@ public class scr_NetworkManager : NetworkRoomManager
         //     }
         // }
     }
-
-    public class PlayerInfo
+    
+    public override void OnGUI()
     {
-        public NetworkConnection connection;
-        public GameObject mainObject;
-        public string role = "";
+        if (!showRoomGUI)
+            return;
 
-        public PlayerInfo(NetworkConnection conn)
+        if (NetworkServer.active && SceneManager.GetActiveScene().name == GameplayScene)
         {
-            connection = conn;
+            GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
+            if (GUILayout.Button("Return to Room"))
+                ServerChangeScene(RoomScene);
+            GUILayout.EndArea();
+        }
+        
+        if (SceneManager.GetActiveScene().name == RoomScene)
+        {
+            const float gapHorizontal = 10f;
+            GUI.Box(new Rect(Screen.width / 2 + gapHorizontal, 180f, Screen.width / 2 - gapHorizontal * 2, Screen.height / 2), "SERVER SETTINGS");
         }
     }
 }
