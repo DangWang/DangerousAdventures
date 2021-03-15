@@ -34,7 +34,7 @@ namespace Mirror
 
         [FormerlySerializedAs("m_MinPlayers")]
         [SerializeField]
-        int minPlayers = 1;
+        public int minPlayers = 1;
 
         [FormerlySerializedAs("m_RoomPlayerPrefab")]
         [SerializeField]
@@ -373,7 +373,7 @@ namespace Mirror
         /// This is invoked when a host is started.
         /// <para>StartHost has multiple signatures, but they all cause this hook to be called.</para>
         /// </summary>
-        public override void OnStartHost()
+        public override void OnStartHost(bool inMatchmaker = true)
         {
             OnRoomStartHost();
         }

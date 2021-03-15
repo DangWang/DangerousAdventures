@@ -16,7 +16,7 @@ public class script_AbilityCaster : NetworkBehaviour
         if (!allAbilities.ContainsKey(abilityName))
         {
             //TODO ability not loaded when in build
-            var path = "../Summer/Assets/Abilities/" + abilityName + ".ability";
+            var path = "../DangerousAdventures/Assets/Abilities/" + abilityName + ".ability";
             //Debug.LogError(path);
             var textReader = new StreamReader(path);
             allAbilities.Add(abilityName, LoadAbility(textReader));

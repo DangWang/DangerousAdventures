@@ -17,7 +17,7 @@ public class scr_MonsterMenu : MonoBehaviour
             {
                 var monsterScript = monsterType.GetComponent<scr_Monster>();
                 var monsterSprite = monsterType.transform.Find("Token").GetComponent<SpriteRenderer>().sprite;
-                var menuElement = transform.Find("Monster_" + i.ToString()).gameObject;
+                var menuElement = transform.Find("    " + i.ToString()).gameObject;
                 menuElement.transform.Find("Image").GetComponent<Image>().sprite = monsterSprite;
                 menuElement.transform.Find("Text").GetComponent<Text>().text = "Cost: " + monsterScript.monsterCost;
             }

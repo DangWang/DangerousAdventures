@@ -14,7 +14,7 @@ public class scr_LobbyPlayer : NetworkRoomPlayer
     private void Start()
     {
         base.Start();
-        publicIp = new WebClient().DownloadString("http://icanhazip.com");
+        // publicIp = new WebClient().DownloadString("http://icanhazip.com");
         CmdChangeRole("None");
     }
 

@@ -40,7 +40,10 @@ public class script_GameManager : NetworkBehaviour
     [ClientRpc]
     public void RpcNextTurn(string current)
     {
-        RpcEndPlayerTurn(current);
+        if (isServer)
+        {
+            RpcEndPlayerTurn(current);
+        }
         _currentPlayer++;
         if (_currentPlayer >= playersInGame)
         {

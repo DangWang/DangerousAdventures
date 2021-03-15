@@ -497,7 +497,7 @@ namespace Mirror
         /// This starts a network "host" - a server and client in the same application.
         /// <para>The client returned from StartHost() is a special "local" client that communicates to the in-process server using a message queue instead of the real network. But in almost all other cases, it can be treated as a normal client.</para>
         /// </summary>
-        public virtual void StartHost()
+        public virtual void StartHost(bool inMatchmaker = true)
         {
             mode = NetworkManagerMode.Host;
 
@@ -528,7 +528,7 @@ namespace Mirror
             // call OnStartHost AFTER SetupServer. this way we can use
             // NetworkServer.Spawn etc. in there too. just like OnStartServer
             // is called after the server is actually properly started.
-            OnStartHost();
+            OnStartHost(inMatchmaker);
 
             // scene change needed? then change scene and spawn afterwards.
             // => BEFORE host client connects. if client auth succeeds then the
@@ -1466,7 +1466,7 @@ namespace Mirror
         /// This is invoked when a host is started.
         /// <para>StartHost has multiple signatures, but they all cause this hook to be called.</para>
         /// </summary>
-        public virtual void OnStartHost() { }
+        public virtual void OnStartHost(bool inMatchmaker) { }
 
         /// <summary>
         /// This is invoked when a server is started - including when a host is started.

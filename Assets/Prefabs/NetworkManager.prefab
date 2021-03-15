@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7079114637122300857}
   - component: {fileID: 7079114637122300838}
   - component: {fileID: 7079114637122300839}
-  - component: {fileID: 7079114637122300836}
+  - component: {fileID: 5379111433434078473}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -54,11 +54,11 @@ MonoBehaviour:
   onlineScene: 
   transport: {fileID: 7079114637122300839}
   networkAddress: localhost
-  maxConnections: 4
+  maxConnections: 10
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 1048639447468386708, guid: 62cd1f05c42970846ad6ad60c7b15cd2,
     type: 3}
-  autoCreatePlayer: 1
+  autoCreatePlayer: 0
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 7191329108811545977, guid: beb80e462387e1742bd68361ace9d33f, type: 3}
@@ -85,8 +85,16 @@ MonoBehaviour:
   - {fileID: 2178660685971693549, guid: 82aaf9321e29a236d9f8286b9246bed8, type: 3}
   - {fileID: 2235279451042065611, guid: 7f58e276f9c4cb6a8b9554448d2d9b50, type: 3}
   - {fileID: 8174497647601764704, guid: 64993d744f9c3fb448e7ab9214cdc95b, type: 3}
+  showRoomGUI: 1
+  minPlayers: 1
+  roomPlayerPrefab: {fileID: 7876487920938720342, guid: 62cd1f05c42970846ad6ad60c7b15cd2,
+    type: 3}
+  RoomScene: NetLobby
+  GameplayScene: DM_Control2
+  roomSlots: []
+  allPlayersReady: 0
   loaded: 0
-  ready: 0
+  publicIp: 
 --- !u!114 &7079114637122300839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,11 +131,11 @@ MonoBehaviour:
   OnServerDisconnected:
     m_PersistentCalls:
       m_Calls: []
-  port: 7777
+  port: 7003
   NoDelay: 1
   serverMaxMessageSize: 16384
   clientMaxMessageSize: 16384
---- !u!114 &7079114637122300836
+--- !u!114 &5379111433434078473
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,7 +144,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7079114637122300837}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fad1912eb97b0e4e8c886c7d0bad11b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showGUI: 1
